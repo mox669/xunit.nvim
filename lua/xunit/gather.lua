@@ -84,4 +84,14 @@ function M.gather(bufnr)
 	table.insert(M.data, 3, { tests = tests })
 end
 
+function M.inspect_data()
+	print(vim.inspect(M.data.namespace))
+	print(vim.inspect(M.data.classname))
+	print("TESTS")
+	for _, test in M.data.tests do
+		print("Name:" .. vim.inspect(test[1]))
+		print("Line:" .. vim.inspect(test[2]))
+		print("Meta:" .. getmetatable(test[3]))
+	end
+end
 return M
