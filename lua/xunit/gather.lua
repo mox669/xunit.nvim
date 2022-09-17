@@ -64,7 +64,7 @@ function M.gather(bufnr)
 	for _, captures, metadata in q_test_case:iter_matches(root, bufnr) do
 		local test_case = q.get_node_text(captures[2], bufnr)
 		-- collect all tests in file
-		table.insert(tests, 1, {
+		table.insert(tests, i, {
 			name = test_case,
 			line = metadata[1].range[1],
 			meta = metadata,
@@ -85,8 +85,8 @@ function M.gather(bufnr)
 	-- local test_path = ns .. "." .. cls .. "." .. tests[1][1]
 	-- debug(test_path)
 	M.data = {
-		namespace = ns,
-		classname = cls,
+		namespace = { ns },
+		classname = { cls },
 		tests = tests,
 	}
 
