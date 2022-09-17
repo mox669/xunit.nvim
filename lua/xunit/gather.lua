@@ -3,7 +3,7 @@
 -----
 
 local M = {}
-data = nil
+data = {}
 
 function M.gather(bufnr)
 	-- local api = vim.api
