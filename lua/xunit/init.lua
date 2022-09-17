@@ -1,3 +1,4 @@
+local gather = require("xunit.gather")
 local api = vim.api
 local cmd = vim.api.nvim_create_user_command
 local bufnr = vim.api.nvim_get_current_buf()
@@ -6,16 +7,14 @@ local augroup = api.nvim_create_augroup("xunit-test", { clear = true })
 local M = {}
 
 local function inspect_data()
-	local gather = require("xunit.gather")
-	local data = gather.data
-	print(data.namespace)
-	print(data.classname)
+	print(gather.data.namespace)
+	print(gather.data.classname)
 	print("TESTS")
-	for _, test in data.tests do
-		print("Name:" .. print(test.name))
-		print("Line:" .. print(test.line))
-		-- print("Meta:" .. print(getmetatable(test[3])))
-	end
+	-- for _, test in gather.data.tests do
+	-- 	print("Name:" .. print(test.name))
+	-- 	print("Line:" .. print(test.line))
+	-- 	-- print("Meta:" .. print(getmetatable(test[3])))
+	-- end
 end
 
 local function setup_autocmd()
@@ -23,7 +22,7 @@ local function setup_autocmd()
 		group = augroup,
 		pattern = "*.cs",
 		callback = function()
-			require("xunit.gather").gather(bufnr)
+			gather.gather(bufnr)
 		end,
 	})
 end
