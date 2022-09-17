@@ -19,4 +19,4 @@ local function get_data()
 	end
 end
 
-vim.api.nvim_create_user_command("XInspect", get_data(), {})
+vim.api.nvim_create_user_command("XInspect", get_data, {})
