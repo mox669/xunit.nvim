@@ -3,7 +3,6 @@
 -----
 
 local M = {}
-data = {}
 
 function M.gather(bufnr)
 	-- local api = vim.api
@@ -80,9 +79,12 @@ function M.gather(bufnr)
 
 	-- local test_path = ns .. "." .. cls .. "." .. tests[1][1]
 	-- debug(test_path)
-	table.insert(data, 1, { namespace = ns })
-	table.insert(data, 2, { classname = cls })
-	table.insert(data, 3, { tests = tests })
+	data = {}
+	table.insert(data, { namespace = ns })
+	table.insert(data, { classname = cls })
+	table.insert(data, { tests = tests })
+
+	-- return data
 end
 
 function M.inspect_data()
