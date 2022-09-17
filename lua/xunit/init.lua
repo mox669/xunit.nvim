@@ -23,7 +23,9 @@ local function setup_autocmd()
 	api.nvim_create_autocmd("BufEnter", {
 		group = group,
 		pattern = "*.cs",
-		callback = gather.gather(bufnr, data),
+		callback = function()
+			gather.gather(bufnr, data)
+		end,
 	})
 end
 
