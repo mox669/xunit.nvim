@@ -4,7 +4,7 @@ local api = vim.api
 local cmd = vim.api.nvim_create_user_command
 local bufnr = vim.api.nvim_get_current_buf()
 local augroup = api.nvim_create_augroup("xunit-test", { clear = true })
-data = gather.data
+local data = gather.data
 
 local M = {}
 
