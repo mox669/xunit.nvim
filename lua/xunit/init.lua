@@ -23,7 +23,7 @@ local function setup_autocmd()
 		group = augroup,
 		pattern = "*.cs",
 		callback = function()
-			gather.gather(bufnr)
+			require("xunit.gather").gather(bufnr)
 		end,
 	})
 end
