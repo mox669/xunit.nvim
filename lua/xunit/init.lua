@@ -4,6 +4,7 @@ local api = vim.api
 local cmd = vim.api.nvim_create_user_command
 local bufnr = vim.api.nvim_get_current_buf()
 local augroup = api.nvim_create_augroup("xunit-test", { clear = true })
+local data = gather.data
 
 local M = {}
 
@@ -23,7 +24,7 @@ local function setup_autocmd()
 		group = augroup,
 		pattern = "*.cs",
 		callback = function()
-			data = gather.gather(bufnr)
+			gather.gather(bufnr)
 		end,
 	})
 end
