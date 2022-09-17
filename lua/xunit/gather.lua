@@ -5,6 +5,7 @@
 local M = {}
 
 function M.gather(bufnr)
+	print("Gathering..")
 	-- local api = vim.api
 	local q = require("vim.treesitter.query")
 	-- local namespace = vim.api.nvim_create_namespace("xunit")

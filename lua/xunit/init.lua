@@ -1,4 +1,5 @@
 local gather = require("xunit.gather")
+
 local api = vim.api
 local cmd = vim.api.nvim_create_user_command
 local bufnr = vim.api.nvim_get_current_buf()
