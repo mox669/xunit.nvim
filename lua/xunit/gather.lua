@@ -4,7 +4,7 @@
 
 local M = {}
 
-function M.gather(bufnr, data)
+function M.gather(bufnr)
 	-- local api = vim.api
 	local q = require("vim.treesitter.query")
 	-- local namespace = vim.api.nvim_create_namespace("xunit")
@@ -79,10 +79,11 @@ function M.gather(bufnr, data)
 
 	-- local test_path = ns .. "." .. cls .. "." .. tests[1][1]
 	-- debug(test_path)
-
+	local data = {}
 	table.insert(data, 1, { namespace = ns })
 	table.insert(data, 2, { classname = cls })
 	table.insert(data, 3, { tests = tests })
+	return data
 end
 
 return M
