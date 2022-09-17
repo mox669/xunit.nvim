@@ -13,9 +13,9 @@ local function inspect_data()
 	print(data.classname)
 	print("TESTS")
 	for _, test in data.tests do
-		print("Name:" .. print(test[1]))
-		print("Line:" .. print(test[2]))
-		print("Meta:" .. print(getmetatable(test[3])))
+		print("Name:" .. print(test.name))
+		print("Line:" .. print(test.line))
+		-- print("Meta:" .. print(getmetatable(test[3])))
 	end
 end
 
