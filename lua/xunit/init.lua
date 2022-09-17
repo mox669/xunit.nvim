@@ -8,13 +8,14 @@ local augroup = api.nvim_create_augroup("xunit-test", { clear = true })
 local M = {}
 
 local function inspect_data()
-	print(gather.data.namespace)
-	print(gather.data.classname)
+	local data = gather.data
+	print(data.namespace)
+	print(data.classname)
 	print("TESTS")
-	for _, test in M.data.tests do
-		print("Name:" .. vim.inspect(test[1]))
-		print("Line:" .. vim.inspect(test[2]))
-		print("Meta:" .. getmetatable(test[3]))
+	for _, test in data.tests do
+		print("Name:" .. print(test[1]))
+		print("Line:" .. print(test[2]))
+		print("Meta:" .. print(getmetatable(test[3])))
 	end
 end
 
