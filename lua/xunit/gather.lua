@@ -1,6 +1,10 @@
+-----
+-- gather.lua: get all needed information for the testsuite
+-----
+
 local M = {}
 
-function M.gather(bufnr)
+function M.gather(bufnr, data)
 	-- local api = vim.api
 	local q = require("vim.treesitter.query")
 	-- local namespace = vim.api.nvim_create_namespace("xunit")
@@ -75,6 +79,10 @@ function M.gather(bufnr)
 
 	local test_path = ns .. "." .. cls .. "." .. tests[1][1]
 	debug(test_path)
+
+	table.insert(data, 1, { namespace = ns })
+	table.insert(data, 2, { classname = cls })
+	table.insert(data, 3, { tests = tests })
 end
 
 return M
