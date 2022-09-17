@@ -20,7 +20,7 @@ function M.inspect_data()
 	for _, test in data.tests do
 		print("Name:" .. vim.inspect(test[1]))
 		print("Line:" .. vim.inspect(test[2]))
-		print("Meta:" .. vim.inspect(test[3]))
+		print("Meta:" .. getmetatable(test[3]))
 	end
 end
 
