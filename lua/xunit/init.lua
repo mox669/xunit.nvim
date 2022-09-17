@@ -1,4 +1,4 @@
-require("gather")
+require("xunit.gather")
 local M = {}
 
 return M
