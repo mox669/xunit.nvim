@@ -3,6 +3,7 @@
 -----
 
 local M = {}
+data = nil
 
 function M.gather(bufnr)
 	-- local api = vim.api
@@ -79,14 +80,14 @@ function M.gather(bufnr)
 
 	-- local test_path = ns .. "." .. cls .. "." .. tests[1][1]
 	-- debug(test_path)
-	table.insert(M.data, 1, { namespace = ns })
-	table.insert(M.data, 2, { classname = cls })
-	table.insert(M.data, 3, { tests = tests })
+	table.insert(data, 1, { namespace = ns })
+	table.insert(data, 2, { classname = cls })
+	table.insert(data, 3, { tests = tests })
 end
 
 function M.inspect_data()
-	print(vim.inspect(M.data.namespace))
-	print(vim.inspect(M.data.classname))
+	print(vim.inspect(data.namespace))
+	print(vim.inspect(data.classname))
 	print("TESTS")
 	for _, test in M.data.tests do
 		print("Name:" .. vim.inspect(test[1]))
@@ -94,4 +95,5 @@ function M.inspect_data()
 		print("Meta:" .. getmetatable(test[3]))
 	end
 end
+
 return M
