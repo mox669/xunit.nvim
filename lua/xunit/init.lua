@@ -24,8 +24,14 @@ function M.inspect_data()
 	end
 end
 
-cmd("XInspect", function()
-	M.inspect_data()
-end, {})
+local function setup_cmd()
+	cmd("XInspect", function()
+		M.inspect_data()
+	end, {})
+end
+
+function M.setup()
+	setup_cmd()
+end
 
 return M
