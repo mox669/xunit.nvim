@@ -8,7 +8,7 @@ local augroup = api.nvim_create_augroup("xunit-test", { clear = true })
 local M = {}
 
 local function inspect_data()
-	local data = gather.data
+	data = gather.data
 	print(data.namespace)
 	print(data.classname)
 	print("TESTS")
