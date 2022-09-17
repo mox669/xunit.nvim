@@ -72,7 +72,7 @@ function M.gather(bufnr)
 		i = i + 1
 	end
 
-	for key, test in pairs(tests) do
+	for key, test in pairs(M.tests) do
 		debug(key)
 		debug(test)
 		debug("name: " .. test.name)
