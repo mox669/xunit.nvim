@@ -58,26 +58,26 @@ function M.gather(bufnr)
 		cls = q.get_node_text(captures[1], bufnr)
 	end
 
+	local tests
+	local i = 1
 	-- get tests
-	local tests = {}
 	for _, captures, metadata in q_test_case:iter_matches(root, bufnr) do
 		local test_case = q.get_node_text(captures[2], bufnr)
 		-- collect all tests in file
-		tests = {
+		table.insert(tests, 1, {
 			name = test_case,
 			line = metadata[1].range[1],
 			meta = metadata,
-		}
-		-- table.insert(tests, i, { test, metadata[1].range[1], metadata })
+		}) -- table.insert(tests, i, { test, metadata[1].range[1], metadata })
+		i = i + 1
 	end
 
 	for key, test in pairs(tests) do
 		debug(key)
 		debug(test)
-		debug("name: " .. test[1])
-		debug("line: " .. test[2])
-		debug(type(test[2]))
-		debug(test[3])
+		debug("name: " .. test.name)
+		debug("line: " .. test.line)
+		debug(test.meta)
 	end
 
 	debug(ns)
