@@ -87,7 +87,7 @@ function M.gather(bufnr)
 	M.data = {
 		namespace = { ns },
 		classname = { cls },
-		tests = tests,
+		tests = { tests },
 	}
 
 	print(M.data.namespace)
