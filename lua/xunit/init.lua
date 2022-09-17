@@ -4,13 +4,12 @@ local api = vim.api
 local cmd = vim.api.nvim_create_user_command
 local bufnr = vim.api.nvim_get_current_buf()
 local augroup = api.nvim_create_augroup("xunit-test", { clear = true })
-local data = gather.data
 
 local M = {}
 
 local function inspect_data()
-	print(data.namespace)
-	print(data.classname)
+	print(gather.data.namespace)
+	print(gather.data.classname)
 	print("TESTS")
 	for _, test in M.data.tests do
 		print("Name:" .. vim.inspect(test[1]))
