@@ -5,7 +5,6 @@
 local M = {}
 
 function M.gather(bufnr)
-	print("Gathering..")
 	-- local api = vim.api
 	local q = require("vim.treesitter.query")
 	-- local namespace = vim.api.nvim_create_namespace("xunit")
@@ -67,6 +66,7 @@ function M.gather(bufnr)
 		tests = {
 			name = test_case,
 			line = metadata[1].range[1],
+			meta = metadata,
 		}
 		-- table.insert(tests, i, { test, metadata[1].range[1], metadata })
 	end
@@ -89,6 +89,9 @@ function M.gather(bufnr)
 		classname = cls,
 		tests = tests,
 	}
+
+	print(M.data.namespace)
+	print(M.data.classname)
 end
 
 return M
