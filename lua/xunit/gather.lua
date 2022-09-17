@@ -85,8 +85,8 @@ function M.gather(bufnr)
 	-- local test_path = ns .. "." .. cls .. "." .. tests[1][1]
 	-- debug(test_path)
 	M.data = {
-		namespace = { ns },
-		classname = { cls },
+		namespace = ns,
+		classname = cls,
 	}
 
 	print(M.data.namespace)
