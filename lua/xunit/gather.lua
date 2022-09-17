@@ -79,7 +79,7 @@ function M.gather(bufnr)
 
 	-- local test_path = ns .. "." .. cls .. "." .. tests[1][1]
 	-- debug(test_path)
-	local data = {}
+	data = {}
 	table.insert(data, 1, { namespace = ns })
 	table.insert(data, 2, { classname = cls })
 	table.insert(data, 3, { tests = tests })

@@ -5,14 +5,14 @@ local cmd = vim.api.nvim_create_user_command
 local bufnr = vim.api.nvim_get_current_buf()
 local augroup = api.nvim_create_augroup("xunit-test", { clear = true })
 
-local tests = {}
+data = {}
 local M = {}
 
 function M.inspect_data()
-	print(vim.inspect(tests.namespace))
-	print(vim.inspect(tests.classname))
+	print(vim.inspect(data.namespace))
+	print(vim.inspect(data.classname))
 	print("TESTS")
-	for _, test in tests.tests do
+	for _, test in data.tests do
 		print("Name:" .. vim.inspect(test[1]))
 		print("Line:" .. vim.inspect(test[2]))
 		print("Meta:" .. getmetatable(test[3]))
@@ -27,8 +27,6 @@ local function setup_autocmd()
 			data = gather.gather(bufnr)
 		end,
 	})
-
-	tests = data
 end
 
 local function setup_cmd()
