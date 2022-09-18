@@ -10,12 +10,12 @@ local M = {}
 local function inspect_data()
 	print("Current namespace -> " .. gather.data.namespace)
 	print("Classname         -> " .. gather.data.classname)
-	print("")
+	print("\n")
 	print("+-------------------------TESTS-------------------------+\n")
 	for _, test in pairs(gather.data.tests) do
 		print("TEST: " .. test.name .. " at line " .. test.line)
 		print("Range -> ", vim.inspect(test.meta[1].range))
-		print("")
+		print("\n")
 	end
 end
 
