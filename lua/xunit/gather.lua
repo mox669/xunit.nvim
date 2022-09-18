@@ -80,14 +80,15 @@ function M.gather(bufnr)
 		debug(test.meta)
 	end
 
-	M.data = {
+	M.xunit_globs = {
 		namespace = ns,
 		classname = cls,
 		tests = tests,
+		marks_ns = namespace,
 	}
 
 	-- show virt text
-	ui.run_tests_virt(bufnr, namespace, M.data.tests)
+	ui.set_virt_all(bufnr, namespace, M.xunit_globs.tests, " Run tests")
 end
 
 return M
