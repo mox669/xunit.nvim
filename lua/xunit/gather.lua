@@ -1,6 +1,8 @@
 -----
 -- gather.lua: get all needed information for the testsuite
 -----
+local api = vim.api
+local ui = require("xunit.ui")
 
 local M = {}
 
@@ -51,6 +53,7 @@ function M.gather(bufnr)
 	for _, captures in q_namespace:iter_matches(root, bufnr) do
 		ns = q.get_node_text(captures[1], bufnr)
 	end
+	local namespace = api.nvim_create_namespace(ns)
 
 	-- get class
 	local cls
@@ -82,6 +85,9 @@ function M.gather(bufnr)
 		classname = cls,
 		tests = tests,
 	}
+
+	-- show virt text
+	ui.run_tests_virt(bufnr, namespace, M.data.tests)
 end
 
 return M
