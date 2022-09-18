@@ -11,9 +11,9 @@ local function inspect_data()
 	print(gather.glob.namespace)
 	print(gather.glob.classname)
 	print("TESTS")
-	for _, test in gather.tests do
-		print(test.name .. " at line " .. test.line)
-		-- print("Meta:" .. print(getmetatable(test[3])))
+	for test, params in gather.tests do
+		print(test .. " at line " .. params.line)
+		print(params.meta)
 	end
 end
 
