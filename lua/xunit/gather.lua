@@ -70,7 +70,7 @@ function M.gather(bufnr)
 		-- 	meta = metadata,
 		-- }) -- table.insert(tests, i, { test, metadata[1].range[1], metadata })
 		-- i = i + 1
-		table.insert(M.tests, { test_case = metadata })
+		table.insert(M.tests, { [test_case] = metadata.range })
 	end
 
 	for k, v in pairs(M.tests) do
