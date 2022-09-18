@@ -65,7 +65,7 @@ function M.gather(bufnr)
 		local test_case = q.get_node_text(captures[2], bufnr)
 		-- collect all tests in file
 		if test_case ~= nil then
-			table.insert(M.tests, { test_case = {line = metadata[1].range[1], meta =  metadata })
+			table.insert(M.tests, { test_case = { line = metadata[1].range[1], meta = metadata } })
 		end
 	end
 
