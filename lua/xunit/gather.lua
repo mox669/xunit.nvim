@@ -74,11 +74,11 @@ function M.gather(bufnr)
 		})
 	end
 
-	for _, test in pairs(tests) do
-		debug(test.name)
-		debug(test.line)
-		debug(test.meta)
-	end
+	-- for _, test in pairs(tests) do
+	-- 	debug(test.name)
+	-- 	debug(test.line)
+	-- 	debug(test.meta)
+	-- end
 
 	M.xunit_globs = {
 		namespace = ns,

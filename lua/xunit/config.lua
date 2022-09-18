@@ -2,8 +2,10 @@ local M = {}
 
 local config = {
 	command = {
+		-- perform 'dotnet clean' default true
 		clean = true,
 	},
+	--TODO (olekatpyle)  09/18/22 - 21:37: ui configs
 }
 
 function M.set(user_conf)
