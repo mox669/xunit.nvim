@@ -64,31 +64,28 @@ function M.gather(bufnr)
 	for _, captures, metadata in q_test_case:iter_matches(root, bufnr) do
 		local test_case = q.get_node_text(captures[2], bufnr)
 		-- collect all tests in file
-		table.insert(M.tests, i, { name = test_case })
-		table.insert(M.tests, i, { line = metadata[1].range[1] })
-		table.insert(M.tests, i, { meta = metadata })
-		i = i + 1
+		if test_case ~= nil then
+			table.insert(M.tests, { test_case = {line = metadata[1].range[1], meta =  metadata })
+		end
 	end
 
-	for key, test in pairs(M.tests) do
-		debug(key)
-		debug(test)
-		debug("name: " .. test.name)
-		debug("line: " .. test.line)
-		debug(test.meta)
+	for test, params in pairs(M.tests) do
+		debug("name: " .. test)
+		debug("line: " .. params.line)
+		debug(params.meta)
 	end
 
 	debug(ns)
 	debug(cls)
 	-- local test_path = ns .. "." .. cls .. "." .. tests[1][1]
 	-- debug(test_path)
-	M.data = {
+	M.glob = {
 		namespace = ns,
 		classname = cls,
 	}
 
-	print(M.data.namespace)
-	print(M.data.classname)
+	print(M.glob.namespace)
+	print(M.glob.classname)
 end
 
 return M
