@@ -21,13 +21,13 @@ function M.execute_all(globs)
 
 	if command.clean then
 		print("cleaning..")
-		vim.fn.jobstart("sudo dotnet clean")
+		vim.fn.jobstart("dotnet clean")
 	end
 
 	for k, test in pairs(globs.tests) do
 		local fqn = "FullyQualifiedName=" .. globs.namespace .. "." .. globs.classname .. "." .. test.name
 
-		local cmd = { "sudo", "dotnet", "test", "-v", "d", "--filter", fqn }
+		local cmd = { "dotnet", "test", "-v", "d", "--filter", fqn }
 		local out = {}
 		vim.fn.jobstart(cmd, {
 			data_buffered = true,
