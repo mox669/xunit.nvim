@@ -70,15 +70,16 @@ function M.gather(bufnr)
 		-- 	meta = metadata,
 		-- }) -- table.insert(tests, i, { test, metadata[1].range[1], metadata })
 		-- i = i + 1
+		table.insert(M.tests, { test_case = metadata })
 	end
 
-	-- for key, test in pairs(tests) do
-	-- 	debug(key)
-	-- 	debug(test)
-	-- 	debug("name: " .. test.name)
-	-- 	debug("line: " .. test.line)
-	-- 	debug(test.meta)
-	-- end
+	for k, v in pairs(M.tests) do
+		debug(key)
+		debug(v)
+		-- debug("name: " .. test.name)
+		-- debug("line: " .. test.line)
+		-- debug(test.meta)
+	end
 
 	debug(ns)
 	debug(cls)
