@@ -21,7 +21,7 @@ local function inspect_data()
 end
 
 local function setup_autocmd()
-	api.nvim_create_autocmd("BufEnter", {
+	api.nvim_create_autocmd("BufRead", {
 		group = augroup,
 		pattern = "*.cs",
 		callback = function()
