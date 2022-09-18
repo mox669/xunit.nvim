@@ -11,7 +11,7 @@ local function inspect_data()
 	print(gather.data.namespace)
 	print(gather.data.classname)
 	print("TESTS")
-	for _, test in pairs(gather.data.tests) do
+	for _, test in pairs(gather.tests) do
 		print(test.name .. "at line " .. test.line)
 		print("meta -> " .. test.meta)
 		-- print("Meta:" .. print(getmetatable(test[3])))
