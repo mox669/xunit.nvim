@@ -13,7 +13,7 @@ local function inspect_data()
 	print("TESTS")
 	for _, test in pairs(gather.data.tests) do
 		print(test.name .. "at line " .. test.line)
-		print("meta -> ", getmetatable(test.meta))
+		print("meta -> ", vim.inspect(test.meta))
 		-- print("Meta:" .. print(getmetatable(test[3])))
 	end
 end
