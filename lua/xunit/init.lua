@@ -27,10 +27,18 @@ local function setup_autocmd()
 			gather.gather(bufnr)
 		end,
 	})
+
+	api.nvim_create_autocmd("BufWritePost", {
+		group = augroup,
+		pattern = "*.cs",
+		callback = function()
+			gather.gather(bufnr)
+		end,
+	})
 end
 
 local function setup_cmd()
-	cmd("XInspect", function()
+	cmd("XShowTests", function()
 		inspect_data()
 	end, {})
 end
