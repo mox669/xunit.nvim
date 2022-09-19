@@ -21,6 +21,12 @@ function M.set_ext(bufnr, ns, line, k, virt_text)
 	})
 end
 
+function M.center_text(str)
+	local width = api.nvim_win_get_width(0)
+	local shift = math.floor(width / 2) - math.floor(string.len(str) / 2)
+	return string.rep(" ", shift) .. str
+end
+
 local win, buf
 function M.create_window()
 	buf = api.nvim_create_buf(false, true)
