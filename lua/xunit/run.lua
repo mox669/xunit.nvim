@@ -7,9 +7,9 @@ local ui = require("xunit.ui")
 local u = require("xunit.utils")
 local test_data = {}
 
-local function analyze(data)
+local function analyze()
 	--TODO (olekatpyle)  09/18/22 - 17:32: find a smoother way to check if success?
-	for _, line in ipairs(data) do
+	for _, line in ipairs(test_data) do
 		if line.find(line, "Fehler!") or line.find(line, "Failed!") then
 			return false
 		end
@@ -31,10 +31,10 @@ local function analyze_all(bufnr, globs)
 			local fqn = globs.namespace .. "." .. globs.classname .. "." .. test.name
 			-- u.debug(ftest)
 			if ftest[1].find(ftest[1], fqn) ~= nil then
-				ui.set_ext(bufnr, globs.marks_ns, test, k, " Failed!")
+				ui.set_ext(bufnr, globs.marks_ns, test.line, k, " Failed!")
 				break
 			else
-				ui.set_ext(bufnr, globs.marks_ns, test, k, " Passed!")
+				ui.set_ext(bufnr, globs.marks_ns, test.line, k, " Passed!")
 			end
 		end
 	end
@@ -79,6 +79,59 @@ function M.execute_all()
 	-- u.debug(test_data)
 	analyze_all(bufnr, globs)
 	print("Finished tests!")
+end
+
+function M.execute_test()
+	local bufnr = api.nvim_get_current_buf()
+	local win = api.nvim_get_current_win()
+	local globs = require("xunit.gather").xunit_globs[bufnr]
+	local current = globs.current
+	local test = globs.tests[current]
+	local cwd = vim.fn.expand("%:h")
+	local clean = config.get("command").clean
+	-- get current cursor row
+	local r = api.nvim_win_get_cursor(win)[1]
+
+	-- get range of test in syntax tree
+	local x1 = test.line
+	local x2 = test.offset[3]
+
+	if r >= x1 and r <= x2 then
+		if clean then
+			Job
+				:new({
+					command = "dotnet",
+					args = { "clean" },
+					cwd = cwd,
+				})
+				:sync()
+		end
+		local fqn = "FullyQualifiedName=" .. globs.namespace .. "." .. globs.classname .. "." .. test.name
+		local cmd = "dotnet test -v m --filter " .. fqn
+		ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, "Running ..")
+		test_data = {}
+		vim.fn.jobstart(cmd, {
+			stdout_buffered = true,
+			on_stdout = function(_, data)
+				if not data then
+					return
+				end
+				for i, line in ipairs(data) do
+					table.insert(test_data, i, line)
+				end
+			end,
+			on_exit = function()
+				local passed = analyze()
+				if passed then
+					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, " Passed!")
+				else
+					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, " Failed!")
+				end
+			end,
+		})
+	else
+		print("Currently no test selected ..")
+	end
 end
 
 return M

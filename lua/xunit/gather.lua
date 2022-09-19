@@ -39,12 +39,23 @@ function M.gather()
 	local q_test_case = vim.treesitter.parse_query(
 		"c_sharp",
 		[[
-    (method_declaration
+    (method_declaration 
       (attribute_list
         (attribute
           name: (identifier) @fact (#eq? @fact "Fact") (#offset! @fact)))
     name: (identifier) @test_case)
-]]
+    ]]
+	)
+
+	local q_offset = vim.treesitter.parse_query(
+		"c_sharp",
+		[[
+	  (method_declaration 
+	    (attribute_list
+	      (attribute
+	        name: (identifier) @fact (#eq? @fact "Fact")))
+    body: (block) @b (#offset! @b))
+	]]
 	)
 
 	-- get namespace
@@ -56,33 +67,44 @@ function M.gather()
 
 	-- get class
 	local cls
-	for _, captures in q_classname:iter_matches(root, bufnr) do
+	for _, captures, _ in q_classname:iter_matches(root, bufnr) do
 		cls = q.get_node_text(captures[1], bufnr)
 	end
 
 	-- get tests
 	local tests = {}
 
+	--TODO (olekatpyle)  09/19/22 - 21:19: instead of using two queries to collect all
+	-- neccessary data, figure out how to do it in one
+	local i = 1
 	for _, captures, metadata in q_test_case:iter_matches(root, bufnr) do
 		local test_case = q.get_node_text(captures[2], bufnr)
 		-- collect all tests in file
 		table.insert(tests, {
+			id = i,
 			name = test_case,
 			line = metadata[1].range[1],
-			meta = metadata,
+			offset = {},
 		})
+		i = i + 1
 	end
 
-	-- for _, test in pairs(tests) do
-	-- 	debug(test.name)
-	-- 	debug(test.line)
-	-- 	debug(test.meta)
-	-- end
+	i = 1
+	for _, _, metadata in q_offset:iter_matches(root, bufnr) do
+		table.insert(tests[i].offset, metadata[2].range[1])
+		table.insert(tests[i].offset, metadata[2].range[2])
+		table.insert(tests[i].offset, metadata[2].range[3])
+		table.insert(tests[i].offset, metadata[2].range[4])
+		i = i + 1
+	end
+	-- u.debug(tests)
+
 	local globs = {
 		namespace = ns,
 		classname = cls,
 		tests = tests,
 		marks_ns = namespace,
+		current = 1,
 	}
 
 	M.xunit_globs[bufnr] = globs

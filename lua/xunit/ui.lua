@@ -1,17 +1,18 @@
 local M = {}
 local api = vim.api
+local u = require("xunit.utils")
 
 function M.set_ext_all(bufnr, ns, tests, virt_text)
 	for k, test in pairs(tests) do
-		M.set_ext(bufnr, ns, test, k, virt_text)
+		M.set_ext(bufnr, ns, test.line, k, virt_text)
 	end
 end
 
-function M.set_ext(bufnr, ns, test, k, virt_text)
+function M.set_ext(bufnr, ns, line, k, virt_text)
 	-- delete previous extmarks with given id
 	vim.api.nvim_buf_del_extmark(bufnr, ns, k)
 	-- create extmark
-	vim.api.nvim_buf_set_extmark(bufnr, ns, test.line, 0, {
+	vim.api.nvim_buf_set_extmark(bufnr, ns, line, 0, {
 		id = k,
 		--TODO (olekatpyle)  09/18/22 - 12:36: add custom HL-Group
 		virt_text = { { virt_text, "" } },
@@ -68,6 +69,57 @@ function M.create_window()
 	api.nvim_command('au BufWipeout <buffer> exe "silent bwipeout! "' .. border_buf)
 
 	return buf
+end
+
+function M.jumpto_first()
+	local bufnr = api.nvim_get_current_buf()
+	local globs = require("xunit.gather").xunit_globs[bufnr]
+	local test = globs.tests[1]
+	local row = test.line
+	local col = test.offset[2]
+	-- u.debug(test)
+	-- u.debug(globs.tests[1].meta[1].range)
+	-- u.debug(row)
+	-- u.debug(col)
+
+	vim.api.nvim_win_set_cursor(0, { row + 1, col })
+	globs.current = 1
+end
+
+function M.jumpto_next()
+	local bufnr = api.nvim_get_current_buf()
+	local globs = require("xunit.gather").xunit_globs[bufnr]
+	local current = globs.current
+
+	if current == #globs.tests then
+		globs.current = 1
+	else
+		globs.current = current % #globs.tests + 1
+	end
+
+	local test = globs.tests[globs.current]
+	local row = test.line
+	local col = test.offset[2]
+
+	vim.api.nvim_win_set_cursor(0, { row + 1, col })
+end
+
+function M.jumpto_prev()
+	local bufnr = api.nvim_get_current_buf()
+	local globs = require("xunit.gather").xunit_globs[bufnr]
+	local current = globs.current
+
+	if current < 1 then
+		globs.current = #globs.tests
+	else
+		globs.current = (current - 1) % #globs.tests
+	end
+
+	local test = globs.tests[globs.current]
+	local row = test.line
+	local col = test.offset[2]
+
+	vim.api.nvim_win_set_cursor(0, { row + 1, col })
 end
 
 return M
