@@ -31,10 +31,10 @@ local function analyze_all(bufnr, globs)
 			local fqn = globs.namespace .. "." .. globs.classname .. "." .. test.name
 			-- u.debug(ftest)
 			if ftest[1].find(ftest[1], fqn) ~= nil then
-				ui.set_ext(bufnr, globs.marks_ns, test.line, k, " Failed!")
+				ui.set_ext(bufnr, globs.marks_ns, test.line, k, " Failed!", "XVirtFailed")
 				break
 			else
-				ui.set_ext(bufnr, globs.marks_ns, test.line, k, " Passed!")
+				ui.set_ext(bufnr, globs.marks_ns, test.line, k, " Passed!", "XVirtPassed")
 			end
 		end
 	end
@@ -42,6 +42,7 @@ end
 
 function M.show_test_result()
 	local buf = ui.create_window()
+	api.nvim_buf_set_option(buf, "modifiable", true)
 	api.nvim_buf_set_lines(buf, 0, -1, false, {
 		ui.center_text("TEST RESULT"),
 	})
@@ -49,6 +50,7 @@ function M.show_test_result()
 		ui.center_text("+---------------+"),
 	})
 	api.nvim_buf_set_lines(buf, 3, -1, false, test_data)
+	api.nvim_buf_set_option(buf, "modifiable", false)
 end
 
 function M.execute_all()
@@ -129,9 +131,9 @@ function M.execute_test()
 			on_exit = function()
 				local passed = analyze()
 				if passed then
-					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, " Passed!")
+					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, " Passed!", "XVirtPassed")
 				else
-					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, " Failed!")
+					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, " Failed!", "XVirtFailed")
 				end
 			end,
 		})
