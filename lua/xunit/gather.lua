@@ -88,7 +88,7 @@ function M.gather(bufnr)
 	}
 
 	-- show virt text
-	ui.set_virt_all(bufnr, namespace, M.xunit_globs.tests, " Run tests")
+	ui.set_ext_all(bufnr, namespace, M.xunit_globs.tests, " Run tests")
 end
 
 return M

@@ -1,4 +1,5 @@
 local gather = require("xunit.gather")
+local ui = require("xunit.ui")
 local run = require("xunit.run")
 
 local api = vim.api
@@ -44,7 +45,7 @@ local function setup_cmd()
 	end, {})
 
 	cmd("XRunAll", function()
-		run.execute_all(gather.xunit_globs)
+		run.execute_all()
 	end, {})
 end
 

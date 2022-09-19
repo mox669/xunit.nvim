@@ -1,66 +1,84 @@
 local M = {}
 
 local api = vim.api
+local Job = require("plenary.job")
 local config = require("xunit.config")
 local ui = require("xunit.ui")
+local u = require("xunit.utils")
+local test_data = {}
 
 local function analyze(data)
-	print(vim.inspect(data))
 	--TODO (olekatpyle)  09/18/22 - 17:32: find a smoother way to check if success?
 	for _, line in ipairs(data) do
-		if line[1].find(line[1], "Fehler!") or line[1].find(line[1], "Failed!") then
+		if line.find(line, "Fehler!") or line.find(line, "Failed!") then
 			return false
 		end
 	end
 	return true
 end
 
-local failed_test_data = {}
+local function analyze_all(bufnr, globs)
+	local foutput = {}
+	for i, line in ipairs(test_data) do
+		if line.find(line, "Failed") then
+			table.insert(foutput, i, { line })
+		end
+	end
+	-- u.debug(output)
+
+	for k, test in pairs(globs.tests) do
+		for _, ftest in pairs(foutput) do
+			local fqn = globs.namespace .. "." .. globs.classname .. "." .. test.name
+			-- u.debug(ftest)
+			if ftest[1].find(ftest[1], fqn) ~= nil then
+				ui.set_ext(bufnr, globs.marks_ns, test, k, " Failed!")
+				break
+			else
+				ui.set_ext(bufnr, globs.marks_ns, test, k, " Passed!")
+			end
+		end
+	end
+end
 
 function M.show_test_log()
 	local buf = ui.create_window()
-	-- api.nvim_buf_set_lines(buf, 0, -1, false, failed_test_data)
+	api.nvim_buf_set_lines(buf, 0, -1, false, test_data)
 end
 
-function M.execute_all(globs)
-	local command = config.get("command")
+function M.execute_all()
+	local globs = require("xunit.gather").xunit_globs
 	local bufnr = api.nvim_get_current_buf()
-	local passed = false
+	local clean = config.get("command").clean
+	-- local user_test_args = config.get("command").test_args
+	local cwd = vim.fn.expand("%:h")
+	-- ui.set_virt_all(bufnr, globs.marks_ns, globs.tests, "Running ..")
 
-	if command.clean then
-		print("cleaning output of previous run..")
-		vim.fn.jobstart("dotnet clean")
+	if clean then
+		Job
+			:new({
+				command = "dotnet",
+				args = { "clean" },
+				cwd = cwd,
+			})
+			:sync()
 	end
 
-	for k, test in pairs(globs.tests) do
-		print("")
-		local fqn = "FullyQualifiedName=" .. globs.namespace .. "." .. globs.classname .. "." .. test.name
-		local cmd = { "dotnet", "test", "-v", "m", "--filter", fqn }
-
-		local out = {}
-		vim.fn.jobstart(cmd, {
-			data_buffered = true,
-			on_stdout = function(_, data)
-				if not data then
-					return
-				end
-				ui.set_virt(bufnr, globs.marks_ns, test, k, "Running..")
-				for ln, line in ipairs(data) do
-					table.insert(out, ln, { line })
-				end
-			end,
-			on_exit = function()
-				passed = analyze(out)
-				if passed == true then
-					ui.set_virt(bufnr, globs.marks_ns, test, k, " Passed!")
-				elseif passed == false then
-					ui.set_virt(bufnr, globs.marks_ns, test, k, " Failed!")
-					table.insert(failed_test_data, k, { [test.name] = out })
-					print(vim.inspect(failed_test_data))
-				end
+	Job
+		:new({
+			command = "dotnet",
+			args = { "test" },
+			cwd = cwd,
+			detached = true,
+			on_exit = function(j)
+				-- u.debug(j:result())
+				test_data = j:result()
 			end,
 		})
-	end
+		:sync()
+
+	-- u.debug(test_data)
+	analyze_all(bufnr, globs)
+	print("Finished tests!")
 end
 
 return M

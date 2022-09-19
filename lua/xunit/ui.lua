@@ -1,13 +1,13 @@
 local M = {}
 local api = vim.api
 
-function M.set_virt_all(bufnr, ns, tests, virt_text)
+function M.set_ext_all(bufnr, ns, tests, virt_text)
 	for k, test in pairs(tests) do
-		M.set_virt(bufnr, ns, test, k, virt_text)
+		M.set_ext(bufnr, ns, test, k, virt_text)
 	end
 end
 
-function M.set_virt(bufnr, ns, test, k, virt_text)
+function M.set_ext(bufnr, ns, test, k, virt_text)
 	-- delete previous extmarks with given id
 	vim.api.nvim_buf_del_extmark(bufnr, ns, k)
 	-- create extmark
@@ -25,19 +25,15 @@ function M.create_window()
 	buf = api.nvim_create_buf(false, true)
 	api.nvim_buf_set_option(buf, "bufhidden", "wipe")
 
-	-- get dimensions
 	local width = api.nvim_get_option("columns")
 	local height = api.nvim_get_option("lines")
 
-	-- calculate our floating window size
 	local win_height = math.ceil(height * 0.8 - 4)
 	local win_width = math.ceil(width * 0.8)
 
-	-- and its starting position
 	local row = math.ceil((height - win_height) / 2 - 1)
 	local col = math.ceil((width - win_width) / 2)
 
-	-- set some options
 	local opts = {
 		style = "minimal",
 		relative = "editor",
@@ -47,7 +43,6 @@ function M.create_window()
 		col = col,
 	}
 
-	-- and finally create it with buffer attached
 	local border_opts = {
 		style = "minimal",
 		relative = "editor",
@@ -67,8 +62,7 @@ function M.create_window()
 	table.insert(border_lines, "╚" .. string.rep("═", win_width) .. "╝")
 
 	api.nvim_buf_set_lines(border_buf, 0, -1, false, border_lines)
-	-- set bufer's (border_buf) lines from first line (0) to last (-1)
-	-- ignoring out-of-bounds error (false) with lines (border_lines)
+
 	local border_win = api.nvim_open_win(border_buf, true, border_opts)
 	win = api.nvim_open_win(buf, true, opts)
 	api.nvim_command('au BufWipeout <buffer> exe "silent bwipeout! "' .. border_buf)
