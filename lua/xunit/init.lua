@@ -1,20 +1,23 @@
 local gather = require("xunit.gather")
 local ui = require("xunit.ui")
+local u = require("xunit.utils")
 local run = require("xunit.run")
 
 local api = vim.api
 local cmd = vim.api.nvim_create_user_command
-local bufnr = vim.api.nvim_get_current_buf()
 local augroup = api.nvim_create_augroup("xunit-test", { clear = true })
 
 local M = {}
 
 local function inspect_data()
-	print("Current namespace -> " .. gather.xunit_globs.namespace)
-	print("Classname         -> " .. gather.xunit_globs.classname)
+	local buf = api.nvim_get_current_buf()
+	-- u.debug(buf)
+	-- u.debug(gather.xunit_globs)
+	print("Current namespace -> " .. gather.xunit_globs[buf].namespace)
+	print("Classname         -> " .. gather.xunit_globs[buf].classname)
 	print("\n")
 	print("+-------------------------TESTS-------------------------+\n")
-	for _, test in pairs(gather.xunit_globs.tests) do
+	for _, test in pairs(gather.xunit_globs[buf].tests) do
 		print("TEST: " .. test.name .. " at line " .. test.line)
 		print("Range -> ", vim.inspect(test.meta[1].range))
 		print("\n")
@@ -26,7 +29,7 @@ local function setup_autocmd()
 		group = augroup,
 		pattern = "*.cs",
 		callback = function()
-			gather.gather(bufnr)
+			gather.gather()
 		end,
 	})
 
@@ -34,7 +37,7 @@ local function setup_autocmd()
 		group = augroup,
 		pattern = "*.cs",
 		callback = function()
-			gather.gather(bufnr)
+			gather.gather()
 		end,
 	})
 end

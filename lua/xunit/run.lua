@@ -46,8 +46,8 @@ function M.show_test_log()
 end
 
 function M.execute_all()
-	local globs = require("xunit.gather").xunit_globs
 	local bufnr = api.nvim_get_current_buf()
+	local globs = require("xunit.gather").xunit_globs[bufnr]
 	local clean = config.get("command").clean
 	-- local user_test_args = config.get("command").test_args
 	local cwd = vim.fn.expand("%:h")

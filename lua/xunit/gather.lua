@@ -3,17 +3,16 @@
 -----
 local api = vim.api
 local ui = require("xunit.ui")
+local u = require("xunit.utils")
 
 local M = {}
+M.xunit_globs = {}
 
-function M.gather(bufnr)
+function M.gather()
 	-- local api = vim.api
 	local q = require("vim.treesitter.query")
 	-- local namespace = vim.api.nvim_create_namespace("xunit")
-
-	local function debug(value)
-		print(vim.inspect(value))
-	end
+	local bufnr = vim.api.nvim_get_current_buf()
 
 	-- get the syntax_tree
 	local language_tree = vim.treesitter.get_parser(bufnr, "c_sharp")
@@ -79,16 +78,18 @@ function M.gather(bufnr)
 	-- 	debug(test.line)
 	-- 	debug(test.meta)
 	-- end
-
-	M.xunit_globs = {
+	local globs = {
 		namespace = ns,
 		classname = cls,
 		tests = tests,
 		marks_ns = namespace,
 	}
 
+	M.xunit_globs[bufnr] = globs
+	-- u.debug(M.xunit_globs)
+
 	-- show virt text
-	ui.set_ext_all(bufnr, namespace, M.xunit_globs.tests, " Run tests")
+	ui.set_ext_all(bufnr, namespace, M.xunit_globs[bufnr].tests, " Run tests")
 end
 
 return M
