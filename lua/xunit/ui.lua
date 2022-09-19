@@ -41,6 +41,7 @@ function M.create_window()
 	local row = math.ceil((height - win_height) / 2 - 1)
 	local col = math.ceil((width - win_width) / 2)
 
+	api.nvim_buf_add_highlight(buf, -1, "VirtFloatNormal", 0, 0, -1)
 	local opts = {
 		style = "minimal",
 		relative = "editor",

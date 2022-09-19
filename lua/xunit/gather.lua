@@ -104,7 +104,7 @@ function M.gather()
 		classname = cls,
 		tests = tests,
 		marks_ns = namespace,
-		current = 1,
+		current = 0,
 	}
 
 	M.xunit_globs[bufnr] = globs

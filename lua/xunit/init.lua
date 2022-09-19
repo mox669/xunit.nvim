@@ -2,6 +2,7 @@ local gather = require("xunit.gather")
 local ui = require("xunit.ui")
 local u = require("xunit.utils")
 local run = require("xunit.run")
+local ctrl = require("xunit.controls")
 
 local api = vim.api
 local cmd = vim.api.nvim_create_user_command
@@ -53,6 +54,18 @@ local function setup_cmd()
 
 	cmd("XRunTest", function()
 		run.execute_test()
+	end, {})
+
+	cmd("XShowResult", function()
+		run.show_test_result()
+	end, {})
+
+	cmd("XNextTest", function()
+		ctrl.jumpto_next()
+	end, {})
+
+	cmd("XPrevTest", function()
+		ctrl.jumpto_prev()
 	end, {})
 end
 
