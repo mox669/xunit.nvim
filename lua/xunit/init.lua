@@ -50,6 +50,10 @@ local function setup_cmd()
 	cmd("XRunAll", function()
 		run.execute_all()
 	end, {})
+
+	cmd("XRunTest", function()
+		run.execute_test()
+	end, {})
 end
 
 function M.setup()
