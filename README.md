@@ -3,9 +3,13 @@
 ## Todo
 
 + user config options [  ]
+  + mappings [  ]
+  + command args [  ]
+  + virt_text options [  ]
 + support for Theories/Inlines [  ]
 + toggle for results float [  ]
 + list all tests in float [  ]
++ clean/refactor codebase [  ]
 
 ## Implemented
 + registering all tests (Facts) per buffer

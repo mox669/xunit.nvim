@@ -116,7 +116,7 @@ function M.execute_test()
 		end
 		local fqn = "FullyQualifiedName=" .. globs.namespace .. "." .. globs.classname .. "." .. test.name
 		local cmd = "dotnet test -v m --filter " .. fqn
-		ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, "Running ..", "XVirtNormal")
+		ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, "Running...", "XVirtNormal")
 		test_data = {}
 		vim.fn.jobstart(cmd, {
 			stdout_buffered = true,
