@@ -1,9 +1,9 @@
 # Xunit Testsuite [WIP] 
 
-## TODO
+## Todo
 
-+ user config options []
-+ support for Theories/Inlines []
++ user config options [  ]
++ support for Theories/Inlines [  ]
 
 ## Implemented
 + registering all tests (Facts) per buffer
