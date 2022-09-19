@@ -4,10 +4,12 @@
 
 + user config options [  ]
 + support for Theories/Inlines [  ]
-+ toggle for results float 
++ toggle for results float [  ]
++ list all tests in float [  ]
 
 ## Implemented
 + registering all tests (Facts) per buffer
++ list all tests with `:XShowTests`
 + execute test command based on selected test in buffer with `:XRunTest`
 + execute all test in buffer with `:XRunAll`
 + floating test result window spawn with `:XShowResult`
