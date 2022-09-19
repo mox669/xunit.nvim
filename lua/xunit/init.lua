@@ -20,7 +20,7 @@ local function inspect_data()
 	print("+-------------------------TESTS-------------------------+\n")
 	for _, test in pairs(gather.xunit_globs[buf].tests) do
 		print("TEST: " .. test.name .. " at line " .. test.line)
-		print("Range -> ", vim.inspect(test.meta[1].range))
+		print("Range -> ", vim.inspect(test.offset))
 		print("\n")
 	end
 end
