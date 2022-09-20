@@ -1,5 +1,7 @@
 -----
--- gather.lua: get all needed information for the testsuite
+-- xunit.gather
+-- Handles TSQueries to get all needed information for the testsuite
+-- and storing that information in a global data table
 -----
 local api = vim.api
 local ui = require("xunit.ui")

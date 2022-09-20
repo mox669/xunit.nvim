@@ -1,3 +1,7 @@
+----
+-- xunit.run
+-- Handles test execution and logs test output data
+----
 local M = {}
 
 local api = vim.api

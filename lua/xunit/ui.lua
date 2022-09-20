@@ -1,3 +1,8 @@
+----
+-- xunit.ui
+-- Handles windows and extmarks.
+-- Global table that stores current selected test for current buffer.
+----
 local M = {}
 local api = vim.api
 local u = require("xunit.utils")

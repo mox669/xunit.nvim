@@ -1,3 +1,7 @@
+----
+-- xunit.controls
+-- Handles cursor movement to jump between tests
+----
 local M = {}
 local api = vim.api
 

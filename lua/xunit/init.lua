@@ -1,3 +1,7 @@
+----
+-- xunit.init
+-- Entry point
+----
 local gather = require("xunit.gather")
 local ui = require("xunit.ui")
 local u = require("xunit.utils")
