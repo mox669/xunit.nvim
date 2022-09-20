@@ -3,22 +3,33 @@ local api = vim.api
 local u = require("xunit.utils")
 
 function M.set_ext_all(bufnr, ns, tests, virt_text, hl)
-	for k, test in pairs(tests) do
-		M.set_ext(bufnr, ns, test.line, k, virt_text, hl)
+	M.del_all_ext(bufnr)
+	for _, test in pairs(tests) do
+		M.set_ext(bufnr, ns, test.line, test.id, virt_text, hl)
 	end
 end
 
-function M.set_ext(bufnr, ns, line, k, virt_text, hl)
+function M.set_ext(bufnr, ns, line, i, virt_text, hl)
 	-- delete previous extmarks with given id
-	vim.api.nvim_buf_del_extmark(bufnr, ns, k)
+	vim.api.nvim_buf_del_extmark(bufnr, ns, i)
+
 	-- create extmark
 	vim.api.nvim_buf_set_extmark(bufnr, ns, line, 0, {
-		id = k,
-		--TODO (olekatpyle)  09/18/22 - 12:36: add custom HL-Group
+		id = i,
 		virt_text = { { virt_text, hl } },
 		virt_text_pos = "eol",
 		ui_watched = true,
 	})
+end
+
+function M.del_all_ext(bufnr)
+	local ns = require("xunit.gather").xunit_globs[bufnr].marks_ns
+	-- u.debug(ns)
+	-- u.debug(api.nvim_buf_get_extmarks(bufnr, ns, 0, -1, {}))
+	local marks = api.nvim_buf_get_extmarks(bufnr, ns, 0, -1, {})
+	for _, m in pairs(marks) do
+		api.nvim_buf_del_extmark(bufnr, ns, m[1])
+	end
 end
 
 function M.center_text(str)

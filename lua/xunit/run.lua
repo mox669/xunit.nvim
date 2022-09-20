@@ -17,6 +17,45 @@ local function analyze()
 	return true
 end
 
+local function analyze_theory(test, bufnr, fqn)
+	local f = {}
+	local globs = require("xunit.gather").xunit_globs[bufnr]
+	local passed = true
+	for _, line in ipairs(test_data) do
+		if line.find(line, "Failed") then
+			table.insert(f, line)
+		end
+	end
+
+	if f then
+		table.remove(f, #f)
+		u.debug(f)
+		local failed = false
+		-- u.debug(test.inlines)
+		for _, inline in pairs(test.inlines) do
+			print("next inline")
+			u.debug(inline)
+			for _, line in ipairs(f) do
+				u.debug(line)
+				local v = line:match("%b()")
+				if inline.v == v then
+					ui.set_ext(bufnr, globs.marks_ns, inline.l - 1, inline.i, "", "XVirtFailed")
+					-- passed will be returned to execute_test
+					passed = false
+					-- local flag
+					failed = true
+				end
+			end
+			if not failed then
+				ui.set_ext(bufnr, globs.marks_ns, inline.l - 1, inline.i, "", "XVirtPassed")
+			end
+			failed = false
+		end
+	end
+
+	return passed
+end
+
 local function analyze_all(bufnr, globs)
 	local foutput = {}
 	for i, line in ipairs(test_data) do
@@ -129,7 +168,12 @@ function M.execute_test()
 				end
 			end,
 			on_exit = function()
-				local passed = analyze()
+				local passed
+				if test.fact then
+					passed = analyze()
+				else
+					passed = analyze_theory(test, bufnr)
+				end
 				if passed then
 					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, " Passed!", "XVirtPassed")
 				else

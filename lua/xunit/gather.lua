@@ -8,6 +8,17 @@ local u = require("xunit.utils")
 local M = {}
 M.xunit_globs = {}
 
+function M.trim(s)
+	s = s:gsub(" ", "")
+	return s
+end
+
+local function isolate_val(s)
+	s = string.gsub(s, "%[InlineData%(", "")
+	s = s:gsub("%)%]", "")
+	return s
+end
+
 function M.gather()
 	-- local api = vim.api
 	local q = require("vim.treesitter.query")
@@ -39,23 +50,20 @@ function M.gather()
 	local q_test_case = vim.treesitter.parse_query(
 		"c_sharp",
 		[[
-    (method_declaration 
-      (attribute_list
-        (attribute
-          name: (identifier) @fact (#eq? @fact "Fact") (#offset! @fact)))
-    name: (identifier) @test_case)
+    (class_declaration
+      (declaration_list
+        (method_declaration 
+          (attribute_list
+            [(attribute
+              name: (identifier) @fact (#eq? @fact "Fact"))
+             (attribute
+              name: (identifier) @theory (#eq? @theory "Theory"))
+            ]) 
+          name: (identifier) @test_case
+          body: (block) @body (#offset! @body)) @method (#offset! @method)
+      )
+    )
     ]]
-	)
-
-	local q_offset = vim.treesitter.parse_query(
-		"c_sharp",
-		[[
-	  (method_declaration 
-	    (attribute_list
-	      (attribute
-	        name: (identifier) @fact (#eq? @fact "Fact")))
-    body: (block) @b (#offset! @b))
-	]]
 	)
 
 	-- get namespace
@@ -78,25 +86,45 @@ function M.gather()
 	-- neccessary data, figure out how to do it in one
 	local i = 1
 	for _, captures, metadata in q_test_case:iter_matches(root, bufnr) do
-		local test_case = q.get_node_text(captures[2], bufnr)
 		-- collect all tests in file
-		table.insert(tests, {
-			id = i,
-			name = test_case,
-			line = metadata[1].range[1],
-			offset = {},
-		})
+		if captures[1] then
+			table.insert(tests, {
+				id = i,
+				name = q.get_node_text(captures[3], bufnr),
+				fact = true,
+				inlines = {},
+				line = metadata[5].range[1],
+				offset = metadata[5].range,
+			})
+			-- debug("name: ", q.get_node_text(captures[1], bufnr))
+		elseif captures[2] then
+			local inlines = {}
+			local val
+			local k = 10
+			for j = metadata[5].range[1] + 2, metadata[4].range[1] - 1 do
+				val = api.nvim_buf_get_lines(bufnr, j - 1, j, true)[1]
+				if val ~= "" then
+					val = M.trim(val)
+					-- the inlines will be checked via string comparison, in order to find out which ones failed
+					val = "(value: " .. isolate_val(val) .. ")"
+					-- u.debug(val)
+
+					table.insert(inlines, { i = k, l = j, v = val })
+				end
+				k = k + 1
+			end
+			table.insert(tests, {
+				id = i,
+				name = q.get_node_text(captures[3], bufnr),
+				fact = false,
+				inlines = inlines,
+				line = metadata[5].range[1],
+				offset = metadata[5].range,
+			})
+		end
 		i = i + 1
 	end
 
-	i = 1
-	for _, _, metadata in q_offset:iter_matches(root, bufnr) do
-		table.insert(tests[i].offset, metadata[2].range[1])
-		table.insert(tests[i].offset, metadata[2].range[2])
-		table.insert(tests[i].offset, metadata[2].range[3])
-		table.insert(tests[i].offset, metadata[2].range[4])
-		i = i + 1
-	end
 	-- u.debug(tests)
 
 	local globs = {
@@ -104,6 +132,7 @@ function M.gather()
 		classname = cls,
 		tests = tests,
 		marks_ns = namespace,
+		--TODO (olekatpyle)  09/20/22 - 17:19: current gets resets to 0 on BufWrite -> that is bad since you have to reselect the test
 		current = 0,
 	}
 
