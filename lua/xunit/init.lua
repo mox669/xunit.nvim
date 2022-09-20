@@ -67,9 +67,9 @@ local function setup_cmd()
 	cmd("XPrevTest", function()
 		ctrl.jumpto_prev()
 	end, {})
-	cmd("XDebug", function()
-		ui.del_all_ext(bufnr)
-	end, {})
+	-- cmd("XDebug", function()
+	-- 	ui.del_all_ext()
+	-- end, {})
 end
 
 function M.setup()
