@@ -103,15 +103,16 @@ function M.gather()
 			local k = 10
 			for j = metadata[5].range[1] + 2, metadata[4].range[1] - 1 do
 				val = api.nvim_buf_get_lines(bufnr, j - 1, j, true)[1]
-				if val ~= "" then
+				if val == "" or val.find(val, "//") ~= nil or val.find(val, "/%*") ~= nil then
+				else
 					val = M.trim(val)
 					-- the inlines will be checked via string comparison, in order to find out which ones failed
 					val = "(value: " .. isolate_val(val) .. ")"
 					-- u.debug(val)
 
 					table.insert(inlines, { i = k, l = j, v = val })
+					k = k + 1
 				end
-				k = k + 1
 			end
 			table.insert(tests, {
 				id = i,

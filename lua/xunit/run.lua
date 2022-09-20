@@ -29,14 +29,14 @@ local function analyze_theory(test, bufnr, fqn)
 
 	if f then
 		table.remove(f, #f)
-		u.debug(f)
+		-- u.debug(f)
 		local failed = false
 		-- u.debug(test.inlines)
 		for _, inline in pairs(test.inlines) do
 			print("next inline")
-			u.debug(inline)
+			-- u.debug(inline)
 			for _, line in ipairs(f) do
-				u.debug(line)
+				-- u.debug(line)
 				local v = line:match("%b()")
 				if inline.v == v then
 					ui.set_ext(bufnr, globs.marks_ns, inline.l - 1, inline.i, "", "XVirtFailed")
