@@ -2,6 +2,14 @@ local M = {}
 local api = vim.api
 local u = require("xunit.utils")
 
+-- init the current selected test for the buffer with 0
+M.ui_globs = {}
+function M.init_ui()
+	local bufnr = api.nvim_get_current_buf()
+	local globs = { current = 0 }
+	M.ui_globs[bufnr] = globs
+end
+
 function M.set_ext_all(bufnr, ns, tests, virt_text, hl)
 	M.del_all_ext(bufnr)
 	for _, test in pairs(tests) do

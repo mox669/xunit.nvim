@@ -132,7 +132,7 @@ function M.execute_test()
 	local bufnr = api.nvim_get_current_buf()
 	local win = api.nvim_get_current_win()
 	local globs = require("xunit.gather").xunit_globs[bufnr]
-	local current = globs.current
+	local current = require("xunit.ui").ui_globs[bufnr].current
 	local test = globs.tests[current]
 	local cwd = vim.fn.expand("%:h")
 	local clean = config.get("command").clean

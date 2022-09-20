@@ -26,11 +26,12 @@ local function inspect_data()
 end
 
 local function setup_autocmd()
-	api.nvim_create_autocmd("BufRead", {
+	api.nvim_create_autocmd("BufEnter", {
 		group = augroup,
 		pattern = "*.cs",
 		callback = function()
 			gather.gather()
+			ui.init_ui()
 		end,
 	})
 

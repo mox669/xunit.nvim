@@ -133,7 +133,6 @@ function M.gather()
 		tests = tests,
 		marks_ns = namespace,
 		--TODO (olekatpyle)  09/20/22 - 17:19: current gets resets to 0 on BufWrite -> that is bad since you have to reselect the test
-		current = 0,
 	}
 
 	M.xunit_globs[bufnr] = globs
