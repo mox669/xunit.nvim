@@ -28,5 +28,6 @@
 
 ## Known Issues
 + execute_all() will freeze the neovim instance, since it currently uses jobwait() to finish all tests and keep results correct 
++ whenever you delete a test or inline data, the ext_marks will remain which looks weird. They get deleted on next BufWrite
 
 
