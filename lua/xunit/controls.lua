@@ -27,7 +27,6 @@ function M.jumpto_next()
 		globs.current = current % #globs.tests + 1
 	end
 
-	print(globs.current)
 	local test = globs.tests[globs.current]
 	local row = test.line
 	local col = test.offset[2]
@@ -45,7 +44,7 @@ function M.jumpto_prev()
 	else
 		globs.current = (current - 1) % #globs.tests
 	end
-	print(globs.current)
+
 	local test = globs.tests[globs.current]
 	local row = test.line
 	local col = test.offset[2]
