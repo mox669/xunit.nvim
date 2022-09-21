@@ -5,7 +5,7 @@
 ----
 local M = {}
 local api = vim.api
-local u = require("xunit.utils")
+-- local u = require("xunit.utils")
 
 -- init the current selected test for the buffer with 0
 M.ui_globs = {}
@@ -37,8 +37,6 @@ end
 
 function M.del_all_ext(bufnr)
 	local ns = require("xunit.gather").xunit_globs[bufnr].marks_ns
-	-- u.debug(ns)
-	-- u.debug(api.nvim_buf_get_extmarks(bufnr, ns, 0, -1, {}))
 	local marks = api.nvim_buf_get_extmarks(bufnr, ns, 0, -1, {})
 	for _, m in pairs(marks) do
 		api.nvim_buf_del_extmark(bufnr, ns, m[1])
@@ -55,6 +53,7 @@ local win, buf
 function M.create_window()
 	buf = api.nvim_create_buf(false, true)
 	api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+	-- api.nvim_buf_add_highlight(buf, -1, "XFloatNormal", 0, 0, -1)
 
 	local width = api.nvim_get_option("columns")
 	local height = api.nvim_get_option("lines")
@@ -64,8 +63,6 @@ function M.create_window()
 
 	local row = math.ceil((height - win_height) / 2 - 1)
 	local col = math.ceil((width - win_width) / 2)
-
-	api.nvim_buf_add_highlight(buf, -1, "XFloatNormal", 0, 0, -1)
 
 	local opts = {
 		style = "minimal",
@@ -86,14 +83,14 @@ function M.create_window()
 	}
 
 	local border_buf = api.nvim_create_buf(false, true)
-
-	local border_lines = { "╔" .. string.rep("═", win_width) .. "╗" }
-	local middle_line = "║" .. string.rep(" ", win_width) .. "║"
+	local border_lines = { "┏" .. string.rep("─", win_width) .. "┓" }
+	local middle_line = "│" .. string.rep(" ", win_width) .. "│"
 	for i = 1, win_height do
 		table.insert(border_lines, middle_line)
 	end
-	table.insert(border_lines, "╚" .. string.rep("═", win_width) .. "╝")
+	table.insert(border_lines, "┗" .. string.rep("─", win_width) .. "┛")
 
+	-- api.nvim_buf_add_highlight(border_buf, -1, "XFloatBorder", 0, 0, -1)
 	api.nvim_buf_set_lines(border_buf, 0, -1, false, border_lines)
 
 	local border_win = api.nvim_open_win(border_buf, true, border_opts)

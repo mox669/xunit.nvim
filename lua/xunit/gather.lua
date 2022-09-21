@@ -5,11 +5,11 @@
 -----
 local api = vim.api
 local ui = require("xunit.ui")
-local u = require("xunit.utils")
 
 local M = {}
 M.xunit_globs = {}
 
+-- helper to isolate the value of the inline
 function M.trim(s)
 	s = s:gsub(" ", "")
 	return s
@@ -75,17 +75,15 @@ function M.gather()
 	end
 	local namespace = api.nvim_create_namespace(ns)
 
-	-- get class
+	-- get classname
 	local cls
 	for _, captures, _ in q_classname:iter_matches(root, bufnr) do
 		cls = q.get_node_text(captures[1], bufnr)
 	end
 
-	-- get tests
+	-- get all tests in buffer
 	local tests = {}
 
-	--TODO (olekatpyle)  09/19/22 - 21:19: instead of using two queries to collect all
-	-- neccessary data, figure out how to do it in one
 	local i = 1
 	for _, captures, metadata in q_test_case:iter_matches(root, bufnr) do
 		-- collect all tests in file
@@ -98,11 +96,11 @@ function M.gather()
 				line = metadata[5].range[1],
 				offset = metadata[5].range,
 			})
-			-- debug("name: ", q.get_node_text(captures[1], bufnr))
 		elseif captures[2] then
 			local inlines = {}
 			local val
 			local k = 10
+			-- check for any valid inline data
 			for j = metadata[5].range[1] + 2, metadata[4].range[1] - 1 do
 				val = api.nvim_buf_get_lines(bufnr, j - 1, j, true)[1]
 				if val == "" or val.find(val, "//") ~= nil or val.find(val, "/%*") ~= nil then
@@ -110,7 +108,6 @@ function M.gather()
 					val = M.trim(val)
 					-- the inlines will be checked via string comparison, in order to find out which ones failed
 					val = "(value: " .. isolate_val(val) .. ")"
-					-- u.debug(val)
 
 					table.insert(inlines, { i = k, l = j, v = val })
 					k = k + 1
@@ -128,8 +125,6 @@ function M.gather()
 		i = i + 1
 	end
 
-	-- u.debug(tests)
-
 	local globs = {
 		namespace = ns,
 		classname = cls,
@@ -138,8 +133,8 @@ function M.gather()
 		--TODO (olekatpyle)  09/20/22 - 17:19: current gets resets to 0 on BufWrite -> that is bad since you have to reselect the test
 	}
 
+	-- Global data object for the current buffer
 	M.xunit_globs[bufnr] = globs
-	-- u.debug(M.xunit_globs)
 
 	-- show virt text
 	local virt = require("xunit.config").get("virt_text").idle

@@ -11,5 +11,5 @@ let g:loaded_xunit = 1
 hi def link XVirtNormal Normal
 hi def link XVirtPassed DiagnosticInfo 
 hi def link XVirtFailed DiagnosticError
-hi def link XFloatBorder Normal 
+hi def link XFloatBorder FloatBorder
 hi def link XFloatNormal NormalFloat

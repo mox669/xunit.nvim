@@ -9,7 +9,7 @@ local Job = require("plenary.job")
 local lazy = require("xunit.lazy")
 local config = lazy.require("xunit.config")
 local ui = require("xunit.ui")
-local u = require("xunit.utils")
+-- local u = require("xunit.utils")
 local test_data = {}
 
 local function analyze()
@@ -102,7 +102,7 @@ function M.show_test_result()
 		ui.center_text("TEST RESULT"),
 	})
 	api.nvim_buf_set_lines(buf, 1, -1, false, {
-		ui.center_text("+---------------+"),
+		ui.center_text("---------------"),
 	})
 	api.nvim_buf_set_lines(buf, 3, -1, false, test_data)
 	api.nvim_buf_set_option(buf, "modifiable", false)
@@ -200,15 +200,13 @@ function M.execute_test()
 
 		local targs = { "dotnet", "test", "-v", verb }
 		local t = command.targs
-		u.debug(t)
 		for _, arg in ipairs(t) do
 			table.insert(targs, arg)
 		end
+
 		local fqn = "FullyQualifiedName=" .. globs.namespace .. "." .. globs.classname .. "." .. test.name
 		table.insert(targs, "--filter")
 		table.insert(targs, fqn)
-		u.debug(targs)
-		-- local cmd = "dotnet test -v m --filter " .. fqn
 
 		ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.running, "XVirtNormal")
 		test_data = {}
