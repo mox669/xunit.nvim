@@ -92,16 +92,7 @@ local function noquiet(verbosity)
 end
 
 function M.show_test_log()
-	local buf = ui.create_window()
-	api.nvim_buf_set_option(buf, "modifiable", true)
-	api.nvim_buf_set_lines(buf, 0, -1, false, {
-		ui.center_text("TEST RESULT"),
-	})
-	api.nvim_buf_set_lines(buf, 1, -1, false, {
-		ui.center_text("---------------"),
-	})
-	api.nvim_buf_set_lines(buf, 3, -1, false, test_data)
-	api.nvim_buf_set_option(buf, "modifiable", false)
+	ui.toggle_test_log(test_data)
 end
 
 -- execute every test found in buffer

@@ -61,7 +61,7 @@ local function setup_cmd()
 		run.execute_test()
 	end, {})
 
-	cmd("XShowResult", function()
+	cmd("XToggleLog", function()
 		run.show_test_log()
 	end, {})
 

@@ -12,6 +12,9 @@ local config = lazy.require("xunit.config")
 
 Xwin_id = nil
 Xbufnr = nil
+Xlwin_id = nil
+Xlbufnr = nil
+Xlborder = nil
 -- local u = require("xunit.utils")
 
 -- init the current selected test for the buffer with 0
@@ -50,16 +53,15 @@ function M.del_all_ext(bufnr)
 	end
 end
 
-function M.center_text(str)
+local function center_text(str)
 	local width = api.nvim_win_get_width(0)
 	local shift = math.floor(width / 2) - math.floor(string.len(str) / 2)
 	return string.rep(" ", shift) .. str
 end
 
-local win, buf
-function M.create_window()
-	buf = api.nvim_create_buf(false, true)
-	api.nvim_buf_set_option(buf, "bufhidden", "wipe")
+local function open_window()
+	local bufnr = api.nvim_create_buf(false, true)
+	api.nvim_buf_set_option(bufnr, "bufhidden", "wipe")
 
 	local conf = config.get()
 
@@ -102,15 +104,24 @@ function M.create_window()
 	api.nvim_buf_set_lines(border_buf, 0, -1, false, border_lines)
 
 	local border_win = api.nvim_open_win(border_buf, true, border_opts)
-	win = api.nvim_open_win(buf, true, opts)
-	api.nvim_command('au BufWipeout <buffer> exe "silent bwipeout! "' .. border_buf)
+	local win = api.nvim_open_win(bufnr, true, opts)
 
-	return buf
+	return {
+		win_id = win,
+		bufnr = bufnr,
+		border_buf = border_buf,
+	}
 end
 
-local function close_menu()
-	api.nvim_win_close(Xwin_id, true)
-	Xwin_id = nil
+local function close(menu)
+	if menu then
+		api.nvim_win_close(Xwin_id, true)
+		Xwin_id = nil
+	else
+		api.nvim_win_close(Xlwin_id, true)
+		api.nvim_buf_delete(Xlborder, {})
+		Xlwin_id = nil
+	end
 end
 
 local function open_menu()
@@ -144,9 +155,33 @@ local function open_menu()
 	}
 end
 
+function M.toggle_test_log(log)
+	if Xlwin_id ~= nil and vim.api.nvim_win_is_valid(Xlwin_id) then
+		close(false)
+		return
+	end
+
+	local win_info = open_window()
+	Xlwin_id = win_info.win_id
+	Xlbufnr = win_info.bufnr
+	Xlborder = win_info.border_buf
+	api.nvim_buf_set_option(Xlbufnr, "modifiable", true)
+	vim.api.nvim_buf_set_option(Xlbufnr, "bufhidden", "delete")
+	vim.api.nvim_buf_set_option(Xlbufnr, "buftype", "acwrite")
+	vim.api.nvim_buf_set_name(Xlbufnr, "Testlog")
+	api.nvim_buf_set_lines(Xlbufnr, 0, -1, false, {
+		center_text("TEST RESULT"),
+	})
+	api.nvim_buf_set_lines(Xlbufnr, 1, -1, false, {
+		center_text("---------------"),
+	})
+	api.nvim_buf_set_lines(Xlbufnr, 3, #log, false, log)
+	api.nvim_buf_set_option(Xlbufnr, "modifiable", false)
+end
+
 function M.toggle_quick_menu()
 	if Xwin_id ~= nil and vim.api.nvim_win_is_valid(Xwin_id) then
-		close_menu()
+		close(true)
 		return
 	end
 
@@ -191,7 +226,7 @@ function M.select_menu_item()
 	local crow = api.nvim_win_get_cursor(Xwin_id)[1]
 	-- check if cursor is at pos of test
 	if crow >= 5 then
-		close_menu()
+		close(true)
 		M.jumpto(idx)
 	end
 end
