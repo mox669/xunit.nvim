@@ -37,7 +37,6 @@ local function analyze_theory(test, bufnr)
 		table.remove(f, #f)
 		local failed = false
 		for _, inline in pairs(test.inlines) do
-			print("next inline")
 			for _, line in ipairs(f) do
 				local v = line:match("%b()")
 				if inline.v == v then
