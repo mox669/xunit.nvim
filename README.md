@@ -6,7 +6,7 @@ verbose commands to run a single test on linux like
 `dotnet test -v diag -l trx --filter FullyQualifiedName=AVeryPackedNamespace.AVeryLongClassName.AVeryLongMethodName`
 that is.
 
-![Preview](https://github.com/olekatpyle/xunit.nvim/xunit.gif)
+![xunit](https://user-images.githubusercontent.com/77517314/191606904-a1e0b895-5d0a-46f8-ac95-3420472c3f99.gif)
 
 ## Implemented
 + registering all tests per buffer
