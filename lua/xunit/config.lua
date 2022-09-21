@@ -29,7 +29,6 @@ local config = {
 function M.set(user_conf)
 	user_conf = user_conf or {}
 	config = vim.tbl_deep_extend("force", config, user_conf)
-	u.debug(config)
 	return config
 end
 

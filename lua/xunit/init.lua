@@ -80,8 +80,7 @@ local function setup_cmd()
 end
 
 function M.setup(user_conf)
-	local conf = config.set(user_conf)
-	u.debug(conf)
+	config.set(user_conf)
 	setup_autocmd()
 	setup_cmd()
 end
