@@ -202,7 +202,8 @@ function M.toggle_quick_menu()
 		"",
 	}
 
-	local pre, sel
+	local pre
+	local sel = ""
 	local i = 1
 	for _, test in pairs(globs.tests) do
 		if i == current then
@@ -214,7 +215,7 @@ function M.toggle_quick_menu()
 			pre = sel .. "[THEORY] "
 		end
 		table.insert(contents, pre .. test.name .. " at line " .. test.line)
-		sel = nil
+		sel = ""
 	end
 
 	vim.api.nvim_buf_set_name(Xbufnr, "Tests")
