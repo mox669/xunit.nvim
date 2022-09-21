@@ -52,7 +52,7 @@ function M.jumpto_prev()
 	end
 	local col = test.offset[2]
 
-	vim.api.nvim_win_set_cursor(0, { row + 2, col })
+	vim.api.nvim_win_set_cursor(0, { row, col })
 end
 
 return M
