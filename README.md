@@ -23,8 +23,6 @@
   + XVirtNormal
   + XVirtPassed
   + XVirtFailed
-  + XFloatNormal
-  + XFloatBorder
 
 ## Known Issues
 + execute_all() will freeze the neovim instance, since it currently uses jobwait() to finish all tests and keep results correct 
