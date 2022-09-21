@@ -234,7 +234,13 @@ end
 function M.jumpto(id)
 	local bufnr = api.nvim_get_current_buf()
 	local test = require("xunit.gather").xunit_globs[bufnr].tests[id]
-	local row = test.line
+	local line = test.line
+	local row
+	if test.fact then
+		row = line + 2
+	else
+		row = line + 2 + #test.inlines
+	end
 	local col = test.offset[2]
 	M.ui_globs[bufnr].current = id
 	vim.api.nvim_win_set_cursor(0, { row + 2, col })

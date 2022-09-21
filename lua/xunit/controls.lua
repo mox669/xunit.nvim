@@ -18,10 +18,16 @@ function M.jumpto_next()
 	end
 
 	local test = globs.tests[uglobs.current]
-	local row = test.line
+	local line = test.line
+	local row
+	if test.fact then
+		row = line + 2
+	else
+		row = line + 2 + #test.inlines
+	end
 	local col = test.offset[2]
 
-	vim.api.nvim_win_set_cursor(0, { row + 2, col })
+	vim.api.nvim_win_set_cursor(0, { row, col })
 end
 
 function M.jumpto_prev()
@@ -37,7 +43,13 @@ function M.jumpto_prev()
 	end
 
 	local test = globs.tests[uglobs.current]
-	local row = test.line
+	local line = test.line
+	local row
+	if test.fact then
+		row = line + 2
+	else
+		row = line + 2 + #test.inlines
+	end
 	local col = test.offset[2]
 
 	vim.api.nvim_win_set_cursor(0, { row + 2, col })
