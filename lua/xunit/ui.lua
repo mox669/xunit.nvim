@@ -237,7 +237,7 @@ function M.jumpto(id)
 	local row = test.line
 	local col = test.offset[2]
 	M.ui_globs[bufnr].current = id
-	vim.api.nvim_win_set_cursor(0, { row + 1, col })
+	vim.api.nvim_win_set_cursor(0, { row + 2, col })
 end
 
 return M

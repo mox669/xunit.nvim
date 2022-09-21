@@ -21,7 +21,7 @@ function M.jumpto_next()
 	local row = test.line
 	local col = test.offset[2]
 
-	vim.api.nvim_win_set_cursor(0, { row + 1, col })
+	vim.api.nvim_win_set_cursor(0, { row + 2, col })
 end
 
 function M.jumpto_prev()
@@ -40,7 +40,7 @@ function M.jumpto_prev()
 	local row = test.line
 	local col = test.offset[2]
 
-	vim.api.nvim_win_set_cursor(0, { row + 1, col })
+	vim.api.nvim_win_set_cursor(0, { row + 2, col })
 end
 
 return M
