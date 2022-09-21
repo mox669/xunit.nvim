@@ -187,6 +187,7 @@ function M.toggle_quick_menu()
 
 	local bufnr = api.nvim_get_current_buf()
 	local globs = require("xunit.gather").xunit_globs[bufnr]
+	local current = require("xunit.ui").ui_globs.current
 	local win_info = open_menu()
 
 	Xwin_id = win_info.win_id
@@ -195,20 +196,25 @@ function M.toggle_quick_menu()
 	local win_width = api.nvim_win_get_width(Xwin_id)
 
 	local contents = {
-		"Namespace ->" .. globs.namespace,
+		"Namespace -> " .. globs.namespace,
 		"Class     -> " .. globs.classname,
 		string.rep("-", win_width),
 		"",
 	}
 
-	local pre
+	local pre, sel
+	local i = 1
 	for _, test in pairs(globs.tests) do
+		if i == current then
+			sel = ">  "
+		end
 		if test.fact then
-			pre = "[FACT]   "
+			pre = sel .. "[FACT]   "
 		else
-			pre = "[THEORY] "
+			pre = sel .. "[THEORY] "
 		end
 		table.insert(contents, pre .. test.name .. " at line " .. test.line)
+		sel = nil
 	end
 
 	vim.api.nvim_buf_set_name(Xbufnr, "Tests")
