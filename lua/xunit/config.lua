@@ -1,3 +1,4 @@
+local u = require("xunit.utils")
 local M = {}
 
 local config = {
@@ -16,7 +17,7 @@ local config = {
 	-- change the virt_text annotation text displayed in the file
 	virt_text = {
 		idle = "Run test",
-		running = "Running",
+		running = "Running...",
 		passed = "Passed!",
 		failed = "Failed!",
 		inln_passed = "ok",
@@ -28,6 +29,7 @@ local config = {
 function M.set(user_conf)
 	user_conf = user_conf or {}
 	config = vim.tbl_deep_extend("force", config, user_conf)
+	u.debug(config)
 	return config
 end
 
@@ -38,4 +40,8 @@ function M.get(key)
 	return config
 end
 
-return M
+return setmetatable(M, {
+	__index = function(_, k)
+		return config[k]
+	end,
+})

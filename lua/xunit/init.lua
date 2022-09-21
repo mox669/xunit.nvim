@@ -2,8 +2,8 @@
 -- xunit.init
 -- Entry point
 ----
-
-local config = require("xunit.config")
+local lazy = require("xunit.lazy")
+local config = lazy.require("xunit.config")
 local gather = require("xunit.gather")
 local ui = require("xunit.ui")
 local u = require("xunit.utils")
@@ -79,8 +79,9 @@ local function setup_cmd()
 	-- end, {})
 end
 
-function M.setup(conf)
-	config.set(conf)
+function M.setup(user_conf)
+	local conf = config.set(user_conf)
+	u.debug(conf)
 	setup_autocmd()
 	setup_cmd()
 end

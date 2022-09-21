@@ -6,7 +6,8 @@ local M = {}
 
 local api = vim.api
 local Job = require("plenary.job")
-local config = require("xunit.config")
+local lazy = require("xunit.lazy")
+local config = lazy.require("xunit.config")
 local virt = config.get("virt_text")
 local ui = require("xunit.ui")
 local u = require("xunit.utils")
@@ -203,6 +204,9 @@ function M.execute_test()
 		table.insert(targs, "--filter")
 		table.insert(targs, fqn)
 		-- local cmd = "dotnet test -v m --filter " .. fqn
+		u.debug(virt)
+		u.debug(virt.running)
+
 		ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.running, "XVirtNormal")
 		test_data = {}
 
