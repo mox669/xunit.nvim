@@ -2,13 +2,13 @@ local u = require("xunit.utils")
 local M = {}
 
 local config = {
-	command = {
+	commands = {
 		-- perform 'dotnet clean' default true
 		clean = true,
 		-- change the verobsity level of the test log: [m]inimal | [n]ormal | [d]etailed | [diag]nostic
 		-- defaults to minimal. (See dotnet test --help)
 		-- NOTE: more detailed logs may have impact on performance
-		verbosity = "diag",
+		verbosity = "m",
 		-- add additional arguements to dotnet [t]est (see dotnet test --help for all options)
 		targs = {},
 		-- add additional arguments to dotnet [c]lean (see dotnet clean --help for all options)

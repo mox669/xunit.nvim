@@ -8,7 +8,6 @@ local api = vim.api
 local Job = require("plenary.job")
 local lazy = require("xunit.lazy")
 local config = lazy.require("xunit.config")
-local virt = config.get("virt_text")
 local ui = require("xunit.ui")
 local u = require("xunit.utils")
 local test_data = {}
@@ -25,6 +24,7 @@ end
 
 local function analyze_theory(test, bufnr)
 	local f = {}
+	local virt = config.virt_text
 	local globs = require("xunit.gather").xunit_globs[bufnr]
 	local passed = true
 	for _, line in ipairs(test_data) do
@@ -64,6 +64,7 @@ end
 
 local function analyze_all(bufnr, globs)
 	local foutput = {}
+	local virt = config.virt_text
 	for i, line in ipairs(test_data) do
 		if line.find(line, "Failed") then
 			table.insert(foutput, i, { line })
@@ -111,17 +112,19 @@ end
 function M.execute_all()
 	local bufnr = api.nvim_get_current_buf()
 	local globs = require("xunit.gather").xunit_globs[bufnr]
-	local clean = config.get("command").clean
-	local cargs = { "clean" }
-	local c = config.get("command").cargs
+	local commands = config.commands
+	local clean = commands.clean
 
-	local verb = config.get("command").verbosity
+	local cargs = { "clean" }
+	local c = commands.cargs
+
+	local verb = commands.verbosity
 	if noquiet(verb) then
 		return
 	end
 
 	local targs = { "test", "-v", verb }
-	local t = config.get("command").targs
+	local t = commands.targs
 
 	-- add user conf to argument list
 	for _, arg in ipairs(c) do
@@ -167,14 +170,16 @@ function M.execute_test()
 	local globs = require("xunit.gather").xunit_globs[bufnr]
 	local current = require("xunit.ui").ui_globs[bufnr].current
 	local test = globs.tests[current]
+	local commands = config.commands
 	local cwd = vim.fn.expand("%:h")
-	local clean = config.get("command").clean
+	local clean = commands.clean
 	local cargs = { "clean" }
-	local c = config.get("command").cargs
+	local virt = config.virt_text
+	local c = commands.cargs
 	for _, arg in ipairs(c) do
 		table.insert(cargs, arg)
 	end
-	local verb = config.get("command").verbosity
+	local verb = commands.verbosity
 	if noquiet(verb) then
 		return
 	end
@@ -196,7 +201,7 @@ function M.execute_test()
 				:sync()
 		end
 		local targs = { "dotnet", "test", "-v", verb }
-		local t = config.get("command").targs
+		local t = commands.targs
 		for _, arg in ipairs(t) do
 			table.insert(targs, arg)
 		end
@@ -204,8 +209,6 @@ function M.execute_test()
 		table.insert(targs, "--filter")
 		table.insert(targs, fqn)
 		-- local cmd = "dotnet test -v m --filter " .. fqn
-		u.debug(virt)
-		u.debug(virt.running)
 
 		ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.running, "XVirtNormal")
 		test_data = {}
