@@ -1,8 +1,7 @@
-local u = require("xunit.utils")
 local M = {}
 
 local config = {
-	commands = {
+	command = {
 		-- perform 'dotnet clean' default true
 		clean = true,
 		-- change the verobsity level of the test log: [m]inimal | [n]ormal | [d]etailed | [diag]nostic

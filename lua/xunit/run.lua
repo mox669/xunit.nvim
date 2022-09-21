@@ -65,29 +65,28 @@ end
 local function analyze_all(bufnr, globs)
 	local foutput = {}
 	local virt = config.virt_text
+	-- store every failed test output
 	for i, line in ipairs(test_data) do
 		if line.find(line, "Failed") then
 			table.insert(foutput, i, { line })
 		end
 	end
-	-- u.debug(output)
 
+	-- check if the test method is mentioned in the test log -> if so, the test failed
 	for k, test in pairs(globs.tests) do
 		for _, ftest in pairs(foutput) do
 			local fqn = globs.namespace .. "." .. globs.classname .. "." .. test.name
-			-- u.debug(ftest)
 			if ftest[1].find(ftest[1], fqn) ~= nil then
-				-- ui.set_ext(bufnr, globs.marks_ns, test.line, k, " Failed!", "XVirtFailed")
 				ui.set_ext(bufnr, globs.marks_ns, test.line, k, virt.failed, "XVirtFailed")
 				break
 			else
-				-- ui.set_ext(bufnr, globs.marks_ns, test.line, k, " Passed!", "XVirtPassed")
 				ui.set_ext(bufnr, globs.marks_ns, test.line, k, virt.passed, "XVirtPassed")
 			end
 		end
 	end
 end
 
+-- helper to ensure VERBOSITY_LEVEL quiet is not set
 local function noquiet(verbosity)
 	if verbosity == "q" then
 		print("Misconfiguration. Verbosity [q]uiet is not allowed! Check your config. Aborting test run ...")
@@ -109,22 +108,22 @@ function M.show_test_result()
 	api.nvim_buf_set_option(buf, "modifiable", false)
 end
 
+-- execute every test found in buffer
 function M.execute_all()
 	local bufnr = api.nvim_get_current_buf()
 	local globs = require("xunit.gather").xunit_globs[bufnr]
-	local commands = config.commands
-	local clean = commands.clean
+	local command = config.command
 
 	local cargs = { "clean" }
-	local c = commands.cargs
+	local c = command.cargs
 
-	local verb = commands.verbosity
+	local verb = command.verbosity
 	if noquiet(verb) then
 		return
 	end
 
 	local targs = { "test", "-v", verb }
-	local t = commands.targs
+	local t = command.targs
 
 	-- add user conf to argument list
 	for _, arg in ipairs(c) do
@@ -137,7 +136,7 @@ function M.execute_all()
 	-- set the cwd to the path of the file, that is currently loaded inside the buffer
 	local cwd = vim.fn.expand("%:h")
 
-	if clean then
+	if command.clean then
 		Job
 			:new({
 				command = "dotnet",
@@ -153,33 +152,31 @@ function M.execute_all()
 			args = targs,
 			cwd = cwd,
 			on_exit = function(j)
-				-- u.debug(j:result())
 				test_data = j:result()
 			end,
 		})
 		:sync()
 
-	-- u.debug(test_data)
 	analyze_all(bufnr, globs)
 	print("Finished tests!")
 end
 
+-- execute selected test
 function M.execute_test()
 	local bufnr = api.nvim_get_current_buf()
 	local win = api.nvim_get_current_win()
 	local globs = require("xunit.gather").xunit_globs[bufnr]
 	local current = require("xunit.ui").ui_globs[bufnr].current
 	local test = globs.tests[current]
-	local commands = config.commands
+	local command = config.command
 	local cwd = vim.fn.expand("%:h")
-	local clean = commands.clean
-	local cargs = { "clean" }
 	local virt = config.virt_text
-	local c = commands.cargs
+	local cargs = { "clean" }
+	local c = command.cargs
 	for _, arg in ipairs(c) do
 		table.insert(cargs, arg)
 	end
-	local verb = commands.verbosity
+	local verb = command.verbosity
 	if noquiet(verb) then
 		return
 	end
@@ -191,7 +188,7 @@ function M.execute_test()
 	local x2 = test.offset[3]
 
 	if r >= x1 and r <= x2 then
-		if clean then
+		if command.clean then
 			Job
 				:new({
 					command = "dotnet",
@@ -200,14 +197,17 @@ function M.execute_test()
 				})
 				:sync()
 		end
+
 		local targs = { "dotnet", "test", "-v", verb }
-		local t = commands.targs
+		local t = command.targs
+		u.debug(t)
 		for _, arg in ipairs(t) do
 			table.insert(targs, arg)
 		end
 		local fqn = "FullyQualifiedName=" .. globs.namespace .. "." .. globs.classname .. "." .. test.name
 		table.insert(targs, "--filter")
 		table.insert(targs, fqn)
+		u.debug(targs)
 		-- local cmd = "dotnet test -v m --filter " .. fqn
 
 		ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.running, "XVirtNormal")
