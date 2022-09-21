@@ -142,7 +142,8 @@ function M.gather()
 	-- u.debug(M.xunit_globs)
 
 	-- show virt text
-	ui.set_ext_all(bufnr, namespace, M.xunit_globs[bufnr].tests, "Run test", "XVirtNormal")
+	local virt = require("xunit.config").get("virt_text").idle
+	ui.set_ext_all(bufnr, namespace, M.xunit_globs[bufnr].tests, virt, "XVirtNormal")
 end
 
 return M

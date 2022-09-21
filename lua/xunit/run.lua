@@ -7,6 +7,7 @@ local M = {}
 local api = vim.api
 local Job = require("plenary.job")
 local config = require("xunit.config")
+local virt = config.get("virt_text")
 local ui = require("xunit.ui")
 local u = require("xunit.utils")
 local test_data = {}
@@ -21,7 +22,7 @@ local function analyze()
 	return true
 end
 
-local function analyze_theory(test, bufnr, fqn)
+local function analyze_theory(test, bufnr)
 	local f = {}
 	local globs = require("xunit.gather").xunit_globs[bufnr]
 	local passed = true
@@ -43,7 +44,7 @@ local function analyze_theory(test, bufnr, fqn)
 				-- u.debug(line)
 				local v = line:match("%b()")
 				if inline.v == v then
-					ui.set_ext(bufnr, globs.marks_ns, inline.l - 1, inline.i, "", "XVirtFailed")
+					ui.set_ext(bufnr, globs.marks_ns, inline.l - 1, inline.i, virt.inln_failed, "XVirtFailed")
 					-- passed will be returned to execute_test
 					passed = false
 					-- local flag
@@ -51,7 +52,7 @@ local function analyze_theory(test, bufnr, fqn)
 				end
 			end
 			if not failed then
-				ui.set_ext(bufnr, globs.marks_ns, inline.l - 1, inline.i, "", "XVirtPassed")
+				ui.set_ext(bufnr, globs.marks_ns, inline.l - 1, inline.i, virt.inln_passed, "XVirtPassed")
 			end
 			failed = false
 		end
@@ -74,13 +75,23 @@ local function analyze_all(bufnr, globs)
 			local fqn = globs.namespace .. "." .. globs.classname .. "." .. test.name
 			-- u.debug(ftest)
 			if ftest[1].find(ftest[1], fqn) ~= nil then
-				ui.set_ext(bufnr, globs.marks_ns, test.line, k, " Failed!", "XVirtFailed")
+				-- ui.set_ext(bufnr, globs.marks_ns, test.line, k, " Failed!", "XVirtFailed")
+				ui.set_ext(bufnr, globs.marks_ns, test.line, k, virt.failed, "XVirtFailed")
 				break
 			else
-				ui.set_ext(bufnr, globs.marks_ns, test.line, k, " Passed!", "XVirtPassed")
+				-- ui.set_ext(bufnr, globs.marks_ns, test.line, k, " Passed!", "XVirtPassed")
+				ui.set_ext(bufnr, globs.marks_ns, test.line, k, virt.passed, "XVirtPassed")
 			end
 		end
 	end
+end
+
+local function noquiet(verbosity)
+	if verbosity == "q" then
+		print("Misconfiguration. Verbosity [q]uiet is not allowed! Check your config. Aborting test run ...")
+		return true
+	end
+	return false
 end
 
 function M.show_test_result()
@@ -100,15 +111,33 @@ function M.execute_all()
 	local bufnr = api.nvim_get_current_buf()
 	local globs = require("xunit.gather").xunit_globs[bufnr]
 	local clean = config.get("command").clean
-	-- local user_test_args = config.get("command").test_args
+	local cargs = { "clean" }
+	local c = config.get("command").cargs
+
+	local verb = config.get("command").verbosity
+	if noquiet(verb) then
+		return
+	end
+
+	local targs = { "test", "-v", verb }
+	local t = config.get("command").targs
+
+	-- add user conf to argument list
+	for _, arg in ipairs(c) do
+		table.insert(cargs, arg)
+	end
+	for _, arg in ipairs(t) do
+		table.insert(targs, arg)
+	end
+
+	-- set the cwd to the path of the file, that is currently loaded inside the buffer
 	local cwd = vim.fn.expand("%:h")
-	-- ui.set_virt_all(bufnr, globs.marks_ns, globs.tests, "Running ..")
 
 	if clean then
 		Job
 			:new({
 				command = "dotnet",
-				args = { "clean" },
+				args = cargs,
 				cwd = cwd,
 			})
 			:sync()
@@ -117,9 +146,8 @@ function M.execute_all()
 	Job
 		:new({
 			command = "dotnet",
-			args = { "test" },
+			args = targs,
 			cwd = cwd,
-			detached = true,
 			on_exit = function(j)
 				-- u.debug(j:result())
 				test_data = j:result()
@@ -140,6 +168,15 @@ function M.execute_test()
 	local test = globs.tests[current]
 	local cwd = vim.fn.expand("%:h")
 	local clean = config.get("command").clean
+	local cargs = { "clean" }
+	local c = config.get("command").cargs
+	for _, arg in ipairs(c) do
+		table.insert(cargs, arg)
+	end
+	local verb = config.get("command").verbosity
+	if noquiet(verb) then
+		return
+	end
 	-- get current cursor row
 	local r = api.nvim_win_get_cursor(win)[1]
 
@@ -152,16 +189,24 @@ function M.execute_test()
 			Job
 				:new({
 					command = "dotnet",
-					args = { "clean" },
+					args = cargs,
 					cwd = cwd,
 				})
 				:sync()
 		end
+		local targs = { "dotnet", "test", "-v", verb }
+		local t = config.get("command").targs
+		for _, arg in ipairs(t) do
+			table.insert(targs, arg)
+		end
 		local fqn = "FullyQualifiedName=" .. globs.namespace .. "." .. globs.classname .. "." .. test.name
-		local cmd = "dotnet test -v m --filter " .. fqn
-		ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, "Running...", "XVirtNormal")
+		table.insert(targs, "--filter")
+		table.insert(targs, fqn)
+		-- local cmd = "dotnet test -v m --filter " .. fqn
+		ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.running, "XVirtNormal")
 		test_data = {}
-		vim.fn.jobstart(cmd, {
+
+		vim.fn.jobstart(targs, {
 			stdout_buffered = true,
 			on_stdout = function(_, data)
 				if not data then
@@ -179,9 +224,9 @@ function M.execute_test()
 					passed = analyze_theory(test, bufnr)
 				end
 				if passed then
-					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, " Passed!", "XVirtPassed")
+					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.passed, "XVirtPassed")
 				else
-					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, " Failed!", "XVirtFailed")
+					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.failed, "XVirtFailed")
 				end
 			end,
 		})
