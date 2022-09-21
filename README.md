@@ -71,4 +71,21 @@ require("xunit").setup({
 + execute_all() will freeze the neovim instance, since it currently uses jobwait() to finish all tests and keep results correct 
 + whenever you delete a test or inline data, the ext_marks will remain which looks weird. They get deleted on next BufWrite
 
+## Contribution
+This is my go on making my first nvim plugin, not only to solve the dotnet test annoyance on linux for myself and others
+but also to give something back to the neovim community and all enthusiasts.
+This being said, this plugin might be far from perfect and I expect a lot of bugs here and there. 
+Feel free to open issues or correct me on matters of the code I am wrong about, since this is also my first software written in lua.
+Also suggest me any features or changes I should make. I will give my best to satisfy all needs.
 
+### Side Note
+I want to mention that I took some inspiration from the following plugins at times, my understanding of lua
+or plenary as utility module was not sufficient:
+
+https://github.com/akinsho/toggleterm.nvim
+
+and 
+
+https://github.com/ThePrimeagen/harpoon
+
+ENJOY!
