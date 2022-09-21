@@ -162,13 +162,18 @@ function M.toggle_quick_menu()
 	local contents = {
 		"Namespace ->" .. globs.namespace,
 		"Class     -> " .. globs.classname,
-		"",
 		string.rep("-", win_width),
 		"",
 	}
 
+	local pre
 	for _, test in pairs(globs.tests) do
-		table.insert(contents, "  " .. test.name .. " at line " .. test.line)
+		if test.fact then
+			pre = "[FACT]   "
+		else
+			pre = "[THEORY] "
+		end
+		table.insert(contents, pre .. test.name .. " at line " .. test.line)
 	end
 
 	vim.api.nvim_buf_set_name(Xbufnr, "Tests")
@@ -177,15 +182,15 @@ function M.toggle_quick_menu()
 	vim.api.nvim_buf_set_option(Xbufnr, "filetype", "harpoon")
 	vim.api.nvim_buf_set_option(Xbufnr, "buftype", "acwrite")
 	vim.api.nvim_buf_set_option(Xbufnr, "bufhidden", "delete")
-	vim.api.nvim_win_set_cursor(0, { 6, 2 })
+	vim.api.nvim_win_set_cursor(0, { 5, 0 })
 	vim.api.nvim_buf_set_keymap(Xbufnr, "n", "<CR>", "<Cmd>lua require('xunit.ui').select_menu_item()<CR>", {})
 end
 
 function M.select_menu_item()
-	local idx = vim.fn.line(".") - 5
+	local idx = vim.fn.line(".") - 4
 	local crow = api.nvim_win_get_cursor(Xwin_id)[1]
 	-- check if cursor is at pos of test
-	if crow >= 6 then
+	if crow >= 5 then
 		close_menu()
 		M.jumpto(idx)
 	end
