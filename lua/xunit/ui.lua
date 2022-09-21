@@ -53,13 +53,13 @@ local win, buf
 function M.create_window()
 	buf = api.nvim_create_buf(false, true)
 	api.nvim_buf_set_option(buf, "bufhidden", "wipe")
-	-- api.nvim_buf_add_highlight(buf, -1, "XFloatNormal", 0, 0, -1)
+	api.nvim_buf_add_highlight(buf, -1, "XFloatNormal", 0, 0, -1)
 
 	local width = api.nvim_get_option("columns")
 	local height = api.nvim_get_option("lines")
 
-	local win_height = math.ceil(height * 0.8 - 4)
-	local win_width = math.ceil(width * 0.8)
+	local win_height = math.ceil(height * 0.9 - 4)
+	local win_width = math.ceil(width * 0.95)
 
 	local row = math.ceil((height - win_height) / 2 - 1)
 	local col = math.ceil((width - win_width) / 2)
@@ -90,7 +90,7 @@ function M.create_window()
 	end
 	table.insert(border_lines, "┗" .. string.rep("─", win_width) .. "┛")
 
-	-- api.nvim_buf_add_highlight(border_buf, -1, "XFloatBorder", 0, 0, -1)
+	api.nvim_buf_add_highlight(border_buf, -1, "XFloatBorder", 0, 0, -1)
 	api.nvim_buf_set_lines(border_buf, 0, -1, false, border_lines)
 
 	local border_win = api.nvim_open_win(border_buf, true, border_opts)
