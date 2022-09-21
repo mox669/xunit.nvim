@@ -18,8 +18,6 @@ local M = {}
 
 local function inspect_data()
 	local buf = api.nvim_get_current_buf()
-	-- u.debug(buf)
-	-- u.debug(gather.xunit_globs)
 	print("Current namespace -> " .. gather.xunit_globs[buf].namespace)
 	print("Classname         -> " .. gather.xunit_globs[buf].classname)
 	print("\n")
@@ -51,8 +49,8 @@ local function setup_autocmd()
 end
 
 local function setup_cmd()
-	cmd("XShowTests", function()
-		inspect_data()
+	cmd("XToggleTests", function()
+		ui.toggle_quick_menu()
 	end, {})
 
 	cmd("XRunAll", function()
@@ -64,7 +62,7 @@ local function setup_cmd()
 	end, {})
 
 	cmd("XShowResult", function()
-		run.show_test_result()
+		run.show_test_log()
 	end, {})
 
 	cmd("XNextTest", function()

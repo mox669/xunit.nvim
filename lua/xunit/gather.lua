@@ -5,6 +5,8 @@
 -----
 local api = vim.api
 local ui = require("xunit.ui")
+local lazy = require("xunit.lazy")
+local config = lazy.require("xunit.config")
 
 local M = {}
 M.xunit_globs = {}
@@ -130,14 +132,13 @@ function M.gather()
 		classname = cls,
 		tests = tests,
 		marks_ns = namespace,
-		--TODO (olekatpyle)  09/20/22 - 17:19: current gets resets to 0 on BufWrite -> that is bad since you have to reselect the test
 	}
 
 	-- Global data object for the current buffer
 	M.xunit_globs[bufnr] = globs
 
 	-- show virt text
-	local virt = require("xunit.config").get("virt_text").idle
+	local virt = config.virt_text.idle
 	ui.set_ext_all(bufnr, namespace, M.xunit_globs[bufnr].tests, virt, "XVirtNormal")
 end
 

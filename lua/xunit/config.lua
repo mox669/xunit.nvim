@@ -22,7 +22,7 @@ local config = {
 		inln_passed = "ok",
 		inln_failed = "x",
 	},
-	--TODO (olekatpyle)  09/18/22 - 21:37: ui configs
+	border = { "┌", "─", "┐", "└", "┘", "│" },
 }
 
 function M.set(user_conf)

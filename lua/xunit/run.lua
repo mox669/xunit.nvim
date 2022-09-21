@@ -9,7 +9,7 @@ local Job = require("plenary.job")
 local lazy = require("xunit.lazy")
 local config = lazy.require("xunit.config")
 local ui = require("xunit.ui")
--- local u = require("xunit.utils")
+local u = require("xunit.utils")
 local test_data = {}
 
 local function analyze()
@@ -35,14 +35,10 @@ local function analyze_theory(test, bufnr)
 
 	if f then
 		table.remove(f, #f)
-		-- u.debug(f)
 		local failed = false
-		-- u.debug(test.inlines)
 		for _, inline in pairs(test.inlines) do
 			print("next inline")
-			-- u.debug(inline)
 			for _, line in ipairs(f) do
-				-- u.debug(line)
 				local v = line:match("%b()")
 				if inline.v == v then
 					ui.set_ext(bufnr, globs.marks_ns, inline.l - 1, inline.i, virt.inln_failed, "XVirtFailed")
@@ -95,7 +91,7 @@ local function noquiet(verbosity)
 	return false
 end
 
-function M.show_test_result()
+function M.show_test_log()
 	local buf = ui.create_window()
 	api.nvim_buf_set_option(buf, "modifiable", true)
 	api.nvim_buf_set_lines(buf, 0, -1, false, {
