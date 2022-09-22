@@ -34,8 +34,11 @@ local function setup_autocmd()
 		group = augroup,
 		pattern = "*.cs",
 		callback = function()
-			gather.gather()
-			ui.init_ui()
+			local bufnr = api.nvim_get_current_buf()
+			if ui.ui_globs[bufnr] == nil then
+				gather.gather()
+				ui.init_ui()
+			end
 		end,
 	})
 

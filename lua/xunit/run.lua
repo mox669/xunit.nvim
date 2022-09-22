@@ -196,7 +196,7 @@ function M.execute_test()
 
 		ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.running, "XVirtNormal")
 		test_data = {}
-
+		-- not using plenary's Job module, since it prevents from setting extmarks
 		vim.fn.jobstart(targs, {
 			stdout_buffered = true,
 			on_stdout = function(_, data)
@@ -216,6 +216,9 @@ function M.execute_test()
 				end
 				if passed then
 					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.passed, "XVirtPassed")
+					-- if api.nvim_get_current_buf() ~= bufnr and u.has_notify then
+					-- 	u.send_notification()
+					-- end
 				else
 					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.failed, "XVirtFailed")
 				end
