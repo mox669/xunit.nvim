@@ -1,4 +1,4 @@
-# Xunit Testsuite for Neovim
+# Xunit testsuite for Neovim
 For all the desperate trying to write csharp programs with neovim like me, this plugin adds 
 a Xunit testrunner to neovim making it a little bit easier to execute .NET tests and taking the world 
 a small step away from relying on \*\*\*\*\*\* to write csharp on linux. At least if you want to avoid 
