@@ -32,7 +32,8 @@ the buffer. You can check out the test log with `:XToggleLog`.
 Although not ideal, you can run every test inside the buffer with `:XRunAll`. (See ___Known Issues___) 
 
 ### Default Configuration
-In order to use the plugin, you have to run the setup function and optionally add a config to it:
+In order to use the plugin, you have to run the setup function. It is recommended to create a __cs.lua__ file inside
+__nvim/ftplugin__ to only use the plugin when .cs files have been loaded. Add the config:
 ```lua
 require("xunit").setup({
 
