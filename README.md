@@ -65,7 +65,7 @@ require("xunit").setup({
     -- change the border used for the popup and the log window	
     border = { "┌", "─", "┐", "└", "┘", "│" },
     -- only relevant, if "nvim-notify" is a installed plugin. Enable/disable notfications
-    notify = false,
+    notify = true,
 })
 ```
 
