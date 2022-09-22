@@ -1,7 +1,7 @@
 # Xunit Testsuite for Neovim
 For all the desperate trying to write csharp programs with neovim like me, this plugin adds 
 a Xunit testrunner to neovim making it a little bit easier to execute .NET tests and taking the world 
-a small step away from relying on VS\*\*\*\* to write csharp on linux. At least if you want to avoid 
+a small step away from relying on \*\*\*\*\*\* to write csharp on linux. At least if you want to avoid 
 verbose commands to run a single test on linux like 
 `dotnet test -v diag -l trx --filter FullyQualifiedName=AVeryPackedNamespace.AVeryLongClassName.AVeryLongMethodName`
 that is.
@@ -15,7 +15,7 @@ that is.
 + execute test command based on selected test in buffer with `:XRunTest`
 + execute all test in buffer with `:XRunAll`
 + floating popup to list all tests in current buffer with `:XToggleTests`
-+ floating test result window spawn with `:XToggleLog`
++ floating test log window spawn with `:XToggleLog`
 + jump controls to easily jump between tests with `:XJumpNext` and `:XJumpPrev`
 + virt_text annotations using extmarks
 + highlight groups
@@ -65,7 +65,13 @@ require("xunit").setup({
 })
 ```
 
+### Mappings
+This plugin does not ship with default key mappings. However they can be easily configured with the provided commands
+listed above. For more help check out the help for key-mapping in neovim (`:h key-mapping`) or have a look in this repo:
+https://github.com/nanotee/nvim-lua-guide
 
+## Future
+Possible integration of notify.nvim to get informed about a test result, when not in the buffer, where the test was executed.
 
 ## Known Issues
 + execute_all() will freeze the neovim instance, since it currently uses jobwait() to finish all tests and keep results correct 
