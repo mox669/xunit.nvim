@@ -23,6 +23,7 @@ local config = {
 		inln_failed = "x",
 	},
 	border = { "┌", "─", "┐", "└", "┘", "│" },
+	notify = true,
 }
 
 function M.set(user_conf)

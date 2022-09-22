@@ -22,6 +22,7 @@ that is.
   + XVirtNormal
   + XVirtPassed
   + XVirtFailed
++ support for nvim-notify
 
 ## Usage
 Navigate with `:XJumpNext` and `:XJumpPrev` to the tests found in the current buffer or use `:XToggleTests` to list all tests
@@ -62,6 +63,8 @@ require("xunit").setup({
 	},
     -- change the border used for the popup and the log window	
     border = { "┌", "─", "┐", "└", "┘", "│" },
+    -- only relevant, if "nvim-notify" is a installed plugin. Enable/disable notfications
+    notify = false,
 })
 ```
 
@@ -69,9 +72,6 @@ require("xunit").setup({
 This plugin does not ship with default key mappings. However they can be easily configured with the provided commands
 listed above. For more help check out the help for key-mapping in neovim (`:h key-mapping`) or have a look in this repo:
 https://github.com/nanotee/nvim-lua-guide
-
-## Future
-Possible integration of notify.nvim to get informed about a test result, when not in the buffer, where the test was executed.
 
 ## Known Issues
 + execute_all() will freeze the neovim instance, since it currently uses jobwait() to finish all tests and keep results correct 

@@ -60,6 +60,8 @@ end
 local function analyze_all(bufnr, globs)
 	local foutput = {}
 	local virt = config.virt_text
+	local ftests = {}
+	local passed = true
 	-- store every failed test output
 	for i, line in ipairs(test_data) do
 		if line.find(line, "Failed") then
@@ -73,12 +75,15 @@ local function analyze_all(bufnr, globs)
 			local fqn = globs.namespace .. "." .. globs.classname .. "." .. test.name
 			if ftest[1].find(ftest[1], fqn) ~= nil then
 				ui.set_ext(bufnr, globs.marks_ns, test.line, k, virt.failed, "XVirtFailed")
+				table.insert(ftests, test.name)
+				passed = false
 				break
 			else
 				ui.set_ext(bufnr, globs.marks_ns, test.line, k, virt.passed, "XVirtPassed")
 			end
 		end
 	end
+	return passed, ftests
 end
 
 -- helper to ensure VERBOSITY_LEVEL quiet is not set
@@ -143,7 +148,19 @@ function M.execute_all()
 		})
 		:sync()
 
-	analyze_all(bufnr, globs)
+	local passed, ftests = analyze_all(bufnr, globs)
+	if u.has_notify and config.notify then
+		if passed then
+			u.send_notification("Testrun finished. All tests passed!", "info")
+		else
+			local msg = "Testrun finished. There have been issues\nwith the following tests:\n\n"
+
+			for _, test in ipairs(ftests) do
+				msg = msg .. test .. "\n"
+			end
+			u.send_notification(msg, "error")
+		end
+	end
 	print("Finished tests!")
 end
 
@@ -158,6 +175,7 @@ function M.execute_test()
 	local cwd = vim.fn.expand("%:h")
 	local virt = config.virt_text
 	local cargs = { "clean" }
+	local file = vim.fn.expand("%:t")
 	local c = command.cargs
 	for _, arg in ipairs(c) do
 		table.insert(cargs, arg)
@@ -216,11 +234,15 @@ function M.execute_test()
 				end
 				if passed then
 					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.passed, "XVirtPassed")
-					-- if api.nvim_get_current_buf() ~= bufnr and u.has_notify then
-					-- 	u.send_notification()
-					-- end
+					-- use this inside if to only notify when not in buffer with test api.nvim_get_current_buf() ~= bufnr
+					if u.has_notify and config.notify then
+						u.send_notification("Testrun for " .. test.name .. " in " .. file .. " passed!", "info")
+					end
 				else
 					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.failed, "XVirtFailed")
+					if u.has_notify and config.notify then
+						u.send_notification("Testrun for " .. test.name .. " failed.", "error")
+					end
 				end
 			end,
 		})
