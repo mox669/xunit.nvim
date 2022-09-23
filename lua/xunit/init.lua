@@ -12,7 +12,6 @@ local ctrl = require("xunit.controls")
 
 local api = vim.api
 local cmd = vim.api.nvim_create_user_command
-local augroup = api.nvim_create_augroup("xunit-test", { clear = true })
 
 local M = {}
 
@@ -30,8 +29,9 @@ local function inspect_data()
 end
 
 local function setup_autocmd()
+	local augr = api.nvim_create_augroup("xunit-test", { clear = true })
 	api.nvim_create_autocmd("BufEnter", {
-		group = augroup,
+		group = augr,
 		pattern = "*.cs",
 		callback = function()
 			local bufnr = api.nvim_get_current_buf()
@@ -43,11 +43,9 @@ local function setup_autocmd()
 	})
 
 	api.nvim_create_autocmd("BufWritePost", {
-		group = augroup,
+		group = augr,
 		pattern = "*.cs",
-		callback = function()
-			gather.gather()
-		end,
+		callback = gather.gather,
 	})
 end
 
