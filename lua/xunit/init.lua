@@ -11,7 +11,6 @@ local run = require("xunit.run")
 local ctrl = require("xunit.controls")
 
 local api = vim.api
-local cmd = vim.api.nvim_create_user_command
 
 local M = {}
 
@@ -50,6 +49,7 @@ local function setup_autocmd()
 end
 
 local function setup_cmd()
+	local cmd = api.nvim_create_user_command
 	cmd("XToggleTests", function()
 		ui.toggle_quick_menu()
 	end, {})
