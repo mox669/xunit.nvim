@@ -1,7 +1,7 @@
 local M = {}
+local lazy = require("xunit.lazy")
+local config = lazy.require("xunit.config")
 local has_notify, notify = pcall(require, "notify")
-
-M.has_notify = has_notify
 
 function M.debug(prefix, data)
 	local pre = prefix or ""
@@ -9,10 +9,14 @@ function M.debug(prefix, data)
 end
 
 function M.send_notification(msg, status)
-	local title = "Xunit"
-	notify(msg, status, {
-		title = title,
-	})
+	if has_notify and config.notify then
+		local title = "Xunit"
+		notify(msg, status, {
+			title = title,
+		})
+	else
+		return
+	end
 end
 
 return M

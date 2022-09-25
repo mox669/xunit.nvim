@@ -149,17 +149,15 @@ function M.execute_all()
 		:sync()
 
 	local passed, ftests = analyze_all(bufnr, globs)
-	if u.has_notify and config.notify then
-		if passed then
-			u.send_notification("Testrun finished. All tests passed!", "info")
-		else
-			local msg = "Testrun finished. There have been issues\nwith the following tests:\n\n"
+	if passed then
+		u.send_notification("Testrun finished. All tests passed!", "info")
+	else
+		local msg = "Testrun finished. There have been issues\nwith the following tests:\n\n"
 
-			for _, test in ipairs(ftests) do
-				msg = msg .. test .. "\n"
-			end
-			u.send_notification(msg, "error")
+		for _, test in ipairs(ftests) do
+			msg = msg .. test .. "\n"
 		end
+		u.send_notification(msg, "error")
 	end
 	print("Finished tests!")
 end
@@ -213,6 +211,7 @@ function M.execute_test()
 		table.insert(targs, fqn)
 
 		ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.running, "XVirtNormal")
+		u.send_notification("Starting testrun..", "info")
 		test_data = {}
 		-- not using plenary's Job module, since it prevents from setting extmarks
 		vim.fn.jobstart(targs, {
@@ -235,14 +234,10 @@ function M.execute_test()
 				if passed then
 					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.passed, "XVirtPassed")
 					-- use this inside if to only notify when not in buffer with test api.nvim_get_current_buf() ~= bufnr
-					if u.has_notify and config.notify then
-						u.send_notification("Testrun for " .. test.name .. " in " .. file .. " passed!", "info")
-					end
+					u.send_notification("Testrun for " .. test.name .. " in " .. file .. " passed!", "info")
 				else
 					ui.set_ext(bufnr, globs.marks_ns, test.line, test.id, virt.failed, "XVirtFailed")
-					if u.has_notify and config.notify then
-						u.send_notification("Testrun for " .. test.name .. " failed.", "error")
-					end
+					u.send_notification("Testrun for " .. test.name .. " failed.", "error")
 				end
 			end,
 		})

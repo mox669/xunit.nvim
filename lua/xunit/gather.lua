@@ -166,10 +166,8 @@ function M.gather()
 	-- show virt text
 	local virt = config.virt_text.idle
 	ui.set_ext_all(bufnr, namespace, M.xunit_globs[bufnr].tests, virt, "XVirtNormal")
-	if u.has_notify and config.notify then
-		local count = #M.xunit_globs[bufnr].tests
-		u.send_notification(count .. " tests were loaded.")
-	end
+	local count = #M.xunit_globs[bufnr].tests
+	u.send_notification(count .. " tests were loaded.")
 end
 
 return M
