@@ -34,7 +34,7 @@ local function setup_autocmd()
 		pattern = "*.cs",
 		callback = function()
 			local bufnr = api.nvim_get_current_buf()
-			if ui.ui_globs[bufnr] == nil then
+			if gather.using_xunit(bufnr) and ui.ui_globs[bufnr] == nil then
 				gather.gather()
 				ui.init_ui()
 			end
@@ -44,7 +44,12 @@ local function setup_autocmd()
 	api.nvim_create_autocmd("BufWritePost", {
 		group = augr,
 		pattern = "*.cs",
-		callback = gather.gather,
+		callback = function()
+			local bufnr = api.nvim_get_current_buf()
+			if gather.using_xunit(bufnr) then
+				gather.gather()
+			end
+		end,
 	})
 end
 
