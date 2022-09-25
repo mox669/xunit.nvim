@@ -10,6 +10,7 @@ that is.
 
 ## Implemented
 + registering all tests per buffer
+  + checking first, if loaded cs file actually is using Xunit
 + supports `[Fact]`, `[Theory]` and  `[InlineData()]`
 + list all tests with `:XShowTests`
 + execute test command based on selected test in buffer with `:XRunTest`
@@ -30,6 +31,10 @@ in the buffer inside a popup menu and select one from there.
 After a test has been selected you can execute it inside Neovim with `:XRunTest`. Virt_text annotations show you the result inside 
 the buffer. You can check out the test log with `:XToggleLog`. 
 Although not ideal, you can run every test inside the buffer with `:XRunAll`. (See ___Known Issues___) 
+
+__Important:__ 
+dotnet test can only be executed from a directory containing a solution file (.sln). There are plans to fix this in the future so 
+the user does not have to specifically launch neovim from that directory with the solution file.
 
 ### Default Configuration
 In order to use the plugin, you have to run the setup function. It is recommended to create a __cs.lua__ file inside
@@ -77,6 +82,7 @@ https://github.com/nanotee/nvim-lua-guide
 ## Known Issues
 + execute_all() will freeze the neovim instance, since it currently uses jobwait() to finish all tests and keep results correct 
 + whenever you delete a test or inline data, the ext_marks will remain which looks weird. They get deleted on next BufWrite
++ tests can only be executed, if neovim was started from the directory containing the solution file (.sln)
 
 ## Contribution
 This is my go on making my first nvim plugin, not only to solve the dotnet test annoyance on linux for myself and others
