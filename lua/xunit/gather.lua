@@ -167,7 +167,10 @@ function M.gather()
 	local virt = config.virt_text.idle
 	ui.set_ext_all(bufnr, namespace, M.xunit_globs[bufnr].tests, virt, "XVirtNormal")
 	local count = #M.xunit_globs[bufnr].tests
-	u.send_notification(count .. " tests were loaded.")
+  local msg = "One test was loaded successfully."
+  if count < 2 then
+    msg = count .. " tests were loaded successfully."
+	u.send_notification(msg, 'info')
 end
 
 return M
