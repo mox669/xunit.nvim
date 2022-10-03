@@ -32,13 +32,16 @@ After a test has been selected you can execute it inside Neovim with `:XRunTest`
 the buffer. You can check out the test log with `:XToggleLog`. 
 Although not ideal, you can run every test inside the buffer with `:XRunAll`. (See ___Known Issues___) 
 
-__Important:__ 
-dotnet test can only be executed from a directory containing a solution file (.sln). There are plans to fix this in the future so 
+__IMPORTANT:__ 
++ the plugin relies on string analysis to validate test results. In order for that to work, dotnet needs to be run in english.
+This can be set with the `DOTNET_CLI_UI_LANGUAGE=en` environment variable.
++ `dotnet test` can only be executed from a directory containing a solution file (.sln). There are plans to fix this in the future so 
 the user does not have to specifically launch neovim from that directory with the solution file.
 
 ### Default Configuration
 In order to use the plugin, you have to run the setup function. It is recommended to create a __cs.lua__ file inside
-__nvim/ftplugin__ to only use the plugin when .cs files have been loaded. Add the config:
+__ftplugin__  directory to only use the plugin when .cs files have been loaded. Add the config:
+
 ```lua
 require("xunit").setup({
 
