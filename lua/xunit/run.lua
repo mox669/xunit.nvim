@@ -200,6 +200,14 @@ function M.execute_test()
   local globs = require("xunit.gather").xunit_globs[bufnr]
   local current = require("xunit.ui").ui_globs[bufnr].current
   local test = globs.tests[current]
+
+  -- return if user has not selected a test at the beginning
+  if test == nil then
+    print("No test selected..")
+    u.send_notification("No test selected..", "info")
+    return
+  end
+
   local command = config.command
   local cwd = vim.fn.expand("%:h")
   local virt = config.virt_text
@@ -213,6 +221,7 @@ function M.execute_test()
   if noquiet(verb) then
     return
   end
+
   -- get current cursor row
   local r = api.nvim_win_get_cursor(win)[1]
 
