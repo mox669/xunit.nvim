@@ -30,6 +30,10 @@ function M.using_xunit(bufnr)
 
   local language_tree = vim.treesitter.get_parser(bufnr, "c_sharp")
   local syntax_tree = language_tree:parse()
+  if syntax_tree == nil then
+    u.send_notification("Treesitter failed parsing!", "error")
+    return
+  end
   local root = syntax_tree[1]:root()
 
   local q_using_xunit = vim.treesitter.parse_query(
@@ -58,6 +62,11 @@ function M.parse()
   -- get the syntax_tree
   local language_tree = vim.treesitter.get_parser(bufnr, "c_sharp")
   local syntax_tree = language_tree:parse()
+  if syntax_tree == nil then
+    u.send_notification("Treesitter failed parsing!", "error")
+    return
+  end
+
   local root = syntax_tree[1]:root()
 
   -- ts queries
