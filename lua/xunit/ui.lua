@@ -10,11 +10,11 @@ local u = require("xunit.utils")
 local lazy = require("xunit.lazy")
 local config = lazy.require("xunit.config")
 
-Xwin_id = nil
-Xbufnr = nil
-Xlwin_id = nil
-Xlbufnr = nil
-Xlborder = nil
+Xwin_id = -1
+Xbufnr = -1
+Xlwin_id = -1
+Xlbufnr = -1
+Xlborder = -1
 -- local u = require("xunit.utils")
 
 -- init the current selected test for the buffer with 0
