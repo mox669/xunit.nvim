@@ -6,26 +6,12 @@ local lazy = require("xunit.lazy")
 local config = lazy.require("xunit.config")
 local parser = require("xunit.parser")
 local ui = require("xunit.ui")
-local u = require("xunit.utils")
 local run = require("xunit.run")
 local ctrl = require("xunit.controls")
 
 local api = vim.api
 
 local M = {}
-
-local function inspect_data()
-  local buf = api.nvim_get_current_buf()
-  print("Current namespace -> " .. parser.xunit_globs[buf].namespace)
-  print("Classname         -> " .. parser.xunit_globs[buf].classname)
-  print("\n")
-  print("+-------------------------TESTS-------------------------+\n")
-  for _, test in pairs(parser.xunit_globs[buf].tests) do
-    print("TEST: " .. test.name .. " at line " .. test.line)
-    print("Range -> ", vim.inspect(test.offset))
-    print("\n")
-  end
-end
 
 local function setup_autocmd()
   local augr = api.nvim_create_augroup("xunit-test", { clear = true })

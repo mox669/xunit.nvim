@@ -6,7 +6,6 @@
 local M = {}
 local api = vim.api
 local popup = require("plenary.popup")
-local u = require("xunit.utils")
 local lazy = require("xunit.lazy")
 local config = lazy.require("xunit.config")
 
@@ -83,15 +82,6 @@ local function open_window()
     col = col,
   }
 
-  local border_opts = {
-    style = "minimal",
-    relative = "editor",
-    width = win_width + 2,
-    height = win_height + 2,
-    row = row - 1,
-    col = col - 1,
-  }
-
   local border = conf.border
   local border_buf = api.nvim_create_buf(false, true)
   local border_lines = {
@@ -100,7 +90,7 @@ local function open_window()
   local middle_line = border[#border]
     .. string.rep(" ", win_width)
     .. border[#border]
-  for i = 1, win_height do
+  for _ in win_height do
     table.insert(border_lines, middle_line)
   end
   table.insert(
@@ -110,7 +100,6 @@ local function open_window()
 
   api.nvim_buf_set_lines(border_buf, 0, -1, false, border_lines)
 
-  local border_win = api.nvim_open_win(border_buf, true, border_opts)
   local win = api.nvim_open_win(bufnr, true, opts)
 
   return {
@@ -147,7 +136,7 @@ local function open_menu()
     border[5],
     border[4],
   }
-  local Xwin_id, win = popup.create(bufnr, {
+  local Xwin_id, _ = popup.create(bufnr, {
     title = "Tests",
     line = math.floor(((vim.o.lines - height) / 2) - 1),
     col = math.floor((vim.o.columns - width) / 2),
