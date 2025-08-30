@@ -1,5 +1,5 @@
 -----
--- xunit.gather
+-- xunit.parser
 -- Handles TSQueries to get all needed information for the testsuite
 -- and storing that information in a global data table
 -----
@@ -35,7 +35,7 @@ function M.using_xunit(bufnr)
   local q_using_xunit = vim.treesitter.parse_query(
     "c_sharp",
     [[
-      (using_directive) @using  
+      (using_directive) @using
     ]]
   )
   local using = false
@@ -49,7 +49,7 @@ function M.using_xunit(bufnr)
   return using
 end
 
-function M.gather()
+function M.parse()
   -- local api = vim.api
   local q = require("vim.treesitter.query")
   -- local namespace = vim.api.nvim_create_namespace("xunit")
@@ -65,7 +65,7 @@ function M.gather()
     "c_sharp",
     [[
   (namespace_declaration
-    name: (qualified_name) @namespace) 
+    name: (qualified_name) @namespace)
 ]]
   )
 
@@ -82,13 +82,13 @@ function M.gather()
     [[
     (class_declaration
       (declaration_list
-        (method_declaration 
+        (method_declaration
           (attribute_list
             [(attribute
               name: (identifier) @fact (#eq? @fact "Fact"))
              (attribute
               name: (identifier) @theory (#eq? @theory "Theory"))
-            ]) 
+            ])
           name: (identifier) @test_case
           body: (block) @body (#offset! @body)) @method (#offset! @method)
       )

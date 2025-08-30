@@ -25,7 +25,7 @@ end
 local function analyze_theory(test, bufnr)
   local f = {}
   local virt = config.virt_text
-  local globs = require("xunit.gather").xunit_globs[bufnr]
+  local globs = require("xunit.parser").xunit_globs[bufnr]
   local passed = true
   for _, line in ipairs(test_data) do
     if line.find(line, "Failed") then
@@ -132,7 +132,7 @@ end
 -- execute every test found in buffer
 function M.execute_all()
   local bufnr = api.nvim_get_current_buf()
-  local globs = require("xunit.gather").xunit_globs[bufnr]
+  local globs = require("xunit.parser").xunit_globs[bufnr]
   local command = config.command
 
   local cargs = { "clean" }
@@ -158,25 +158,21 @@ function M.execute_all()
   local cwd = vim.fn.expand("%:h")
 
   if command.clean then
-    Job
-      :new({
-        command = "dotnet",
-        args = cargs,
-        cwd = cwd,
-      })
-      :sync()
+    Job:new({
+      command = "dotnet",
+      args = cargs,
+      cwd = cwd,
+    }):sync()
   end
 
-  Job
-    :new({
-      command = "dotnet",
-      args = targs,
-      cwd = cwd,
-      on_exit = function(j)
-        test_data = j:result()
-      end,
-    })
-    :sync()
+  Job:new({
+    command = "dotnet",
+    args = targs,
+    cwd = cwd,
+    on_exit = function(j)
+      test_data = j:result()
+    end,
+  }):sync()
 
   local passed, ftests = analyze_all(bufnr, globs)
   if passed then
@@ -197,7 +193,7 @@ end
 function M.execute_test()
   local bufnr = api.nvim_get_current_buf()
   local win = api.nvim_get_current_win()
-  local globs = require("xunit.gather").xunit_globs[bufnr]
+  local globs = require("xunit.parser").xunit_globs[bufnr]
   local current = require("xunit.ui").ui_globs[bufnr].current
   local test = globs.tests[current]
 
@@ -231,13 +227,11 @@ function M.execute_test()
 
   if r >= x1 and r <= x2 then
     if command.clean then
-      Job
-        :new({
-          command = "dotnet",
-          args = cargs,
-          cwd = cwd,
-        })
-        :sync()
+      Job:new({
+        command = "dotnet",
+        args = cargs,
+        cwd = cwd,
+      }):sync()
     end
 
     local targs = { "dotnet", "test", "-v", verb }

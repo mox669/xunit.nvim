@@ -7,7 +7,7 @@ local api = vim.api
 
 function M.jumpto_next()
   local bufnr = api.nvim_get_current_buf()
-  local globs = require("xunit.gather").xunit_globs[bufnr]
+  local globs = require("xunit.parser").xunit_globs[bufnr]
   local uglobs = require("xunit.ui").ui_globs[bufnr]
   local current = uglobs.current
 
@@ -32,7 +32,7 @@ end
 
 function M.jumpto_prev()
   local bufnr = api.nvim_get_current_buf()
-  local globs = require("xunit.gather").xunit_globs[bufnr]
+  local globs = require("xunit.parser").xunit_globs[bufnr]
   local uglobs = require("xunit.ui").ui_globs[bufnr]
   local current = uglobs.current
 

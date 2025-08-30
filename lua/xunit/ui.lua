@@ -46,7 +46,7 @@ function M.set_ext(bufnr, ns, line, i, virt_text, hl)
 end
 
 function M.del_all_ext(bufnr)
-  local ns = require("xunit.gather").xunit_globs[bufnr].marks_ns
+  local ns = require("xunit.parser").xunit_globs[bufnr].marks_ns
   local marks = api.nvim_buf_get_extmarks(bufnr, ns, 0, -1, {})
   for _, m in pairs(marks) do
     api.nvim_buf_del_extmark(bufnr, ns, m[1])
@@ -193,7 +193,7 @@ function M.toggle_quick_menu()
   end
 
   local bufnr = api.nvim_get_current_buf()
-  local globs = require("xunit.gather").xunit_globs[bufnr]
+  local globs = require("xunit.parser").xunit_globs[bufnr]
   local current = require("xunit.ui").ui_globs.current
   local win_info = open_menu()
 
@@ -253,7 +253,7 @@ end
 
 function M.jumpto(id)
   local bufnr = api.nvim_get_current_buf()
-  local test = require("xunit.gather").xunit_globs[bufnr].tests[id]
+  local test = require("xunit.parser").xunit_globs[bufnr].tests[id]
   local line = test.line
   local row
   if test.fact then

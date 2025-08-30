@@ -4,7 +4,7 @@
 ----
 local lazy = require("xunit.lazy")
 local config = lazy.require("xunit.config")
-local gather = require("xunit.gather")
+local parser = require("xunit.parser")
 local ui = require("xunit.ui")
 local u = require("xunit.utils")
 local run = require("xunit.run")
@@ -16,11 +16,11 @@ local M = {}
 
 local function inspect_data()
   local buf = api.nvim_get_current_buf()
-  print("Current namespace -> " .. gather.xunit_globs[buf].namespace)
-  print("Classname         -> " .. gather.xunit_globs[buf].classname)
+  print("Current namespace -> " .. parser.xunit_globs[buf].namespace)
+  print("Classname         -> " .. parser.xunit_globs[buf].classname)
   print("\n")
   print("+-------------------------TESTS-------------------------+\n")
-  for _, test in pairs(gather.xunit_globs[buf].tests) do
+  for _, test in pairs(parser.xunit_globs[buf].tests) do
     print("TEST: " .. test.name .. " at line " .. test.line)
     print("Range -> ", vim.inspect(test.offset))
     print("\n")
@@ -34,8 +34,8 @@ local function setup_autocmd()
     pattern = "*.cs",
     callback = function()
       local bufnr = api.nvim_get_current_buf()
-      if gather.using_xunit(bufnr) and ui.ui_globs[bufnr] == nil then
-        gather.gather()
+      if parser.using_xunit(bufnr) and ui.ui_globs[bufnr] == nil then
+        parser.parse()
         ui.init_ui()
       end
     end,
@@ -46,8 +46,8 @@ local function setup_autocmd()
     pattern = "*.cs",
     callback = function()
       local bufnr = api.nvim_get_current_buf()
-      if gather.using_xunit(bufnr) then
-        gather.gather()
+      if parser.using_xunit(bufnr) then
+        parser.parse()
       end
     end,
   })
