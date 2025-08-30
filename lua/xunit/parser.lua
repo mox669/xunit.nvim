@@ -8,6 +8,7 @@ local ui = require("xunit.ui")
 local lazy = require("xunit.lazy")
 local config = lazy.require("xunit.config")
 local u = require("xunit.utils")
+local ts = require("vim.treesitter")
 
 local M = {}
 M.xunit_globs = {}
@@ -26,8 +27,6 @@ end
 
 -- check if using_directive "using Xunit" exists in the file
 function M.using_xunit(bufnr)
-  local q = require("vim.treesitter.query")
-
   local language_tree = vim.treesitter.get_parser(bufnr, "c_sharp")
   local syntax_tree = language_tree:parse()
   if syntax_tree == nil then
@@ -36,7 +35,7 @@ function M.using_xunit(bufnr)
   end
   local root = syntax_tree[1]:root()
 
-  local q_using_xunit = vim.treesitter.parse_query(
+  local q_using_xunit = ts.query.parse(
     "c_sharp",
     [[
       (using_directive) @using
@@ -45,7 +44,7 @@ function M.using_xunit(bufnr)
   local using = false
   local directive
   for _, captures in q_using_xunit:iter_matches(root, bufnr) do
-    directive = q.get_node_text(captures[1], bufnr)
+    directive = ts.get_node_text(captures[1], bufnr)
     if directive and directive.find(directive, "Xunit") then
       using = true
     end
@@ -55,7 +54,6 @@ end
 
 function M.parse()
   -- local api = vim.api
-  local q = require("vim.treesitter.query")
   -- local namespace = vim.api.nvim_create_namespace("xunit")
   local bufnr = vim.api.nvim_get_current_buf()
 
@@ -70,7 +68,7 @@ function M.parse()
   local root = syntax_tree[1]:root()
 
   -- ts queries
-  local q_namespace = vim.treesitter.parse_query(
+  local q_namespace = ts.query.parse(
     "c_sharp",
     [[
   (namespace_declaration
@@ -78,7 +76,7 @@ function M.parse()
 ]]
   )
 
-  local q_classname = vim.treesitter.parse_query(
+  local q_classname = ts.query.parse(
     "c_sharp",
     [[
   (class_declaration
@@ -86,7 +84,7 @@ function M.parse()
 ]]
   )
 
-  local q_test_case = vim.treesitter.parse_query(
+  local q_test_case = ts.query.parse(
     "c_sharp",
     [[
     (class_declaration
@@ -108,14 +106,14 @@ function M.parse()
   -- get namespace
   local ns
   for _, captures in q_namespace:iter_matches(root, bufnr) do
-    ns = q.get_node_text(captures[1], bufnr)
+    ns = ts.get_node_text(captures[1], bufnr)
   end
   local namespace = api.nvim_create_namespace(ns)
 
   -- get classname
   local cls
   for _, captures, _ in q_classname:iter_matches(root, bufnr) do
-    cls = q.get_node_text(captures[1], bufnr)
+    cls = ts.get_node_text(captures[1], bufnr)
   end
 
   -- get all tests in buffer
@@ -127,7 +125,7 @@ function M.parse()
     if captures[1] then
       table.insert(tests, {
         id = i,
-        name = q.get_node_text(captures[3], bufnr),
+        name = ts.get_node_text(captures[3], bufnr),
         fact = true,
         inlines = {},
         line = metadata[5].range[1],
@@ -156,7 +154,7 @@ function M.parse()
       end
       table.insert(tests, {
         id = i,
-        name = q.get_node_text(captures[3], bufnr),
+        name = ts.get_node_text(captures[3], bufnr),
         fact = false,
         inlines = inlines,
         line = metadata[5].range[1],
