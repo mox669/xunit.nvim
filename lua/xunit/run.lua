@@ -312,4 +312,17 @@ function M.execute_test()
   end
 end
 
+function M.inspect_data()
+  local buf = api.nvim_get_current_buf()
+  print("Current namespace -> " .. M.xunit_globs[buf].namespace)
+  print("Classname         -> " .. M.xunit_globs[buf].classname)
+  print("\n")
+  print("+-------------------------TESTS-------------------------+\n")
+  for _, test in pairs(M.xunit_globs[buf].tests) do
+    print("TEST: " .. test.name .. " at line " .. test.line)
+    print("Range -> ", vim.inspect(test.offset))
+    print("\n")
+  end
+end
+
 return M
